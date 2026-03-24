@@ -1,0 +1,65 @@
+{
+  "video_info": {
+    "title": "Exemplo de configuracao de overlay",
+    "format": "9:16",
+    "resolution": "1080x1920"
+  },
+  "style": {
+    "font_main": "Inter",
+    "font_weight": 700,
+    "font_size_hook": "48px",
+    "font_size_phrase": "36px",
+    "font_size_bullet": "28px",
+    "color_text": "#FFFFFF",
+    "color_accent": "#CCCCCC",
+    "text_shadow": "2px 2px 8px rgba(0,0,0,0.7)",
+    "safe_zone_px": 100
+  },
+  "animations": {
+    "entrance": "fadeInUp",
+    "entrance_duration": "0.4s",
+    "exit": "fadeOut",
+    "exit_duration": "0.3s",
+    "phrase_duration_min": 2,
+    "phrase_duration_max": 4,
+    "gap_between_phrases": 1
+  },
+  "overlays": [
+    {
+      "type": "hook",
+      "text": "Exemplo de gancho forte",
+      "timestamp_start": 0.5,
+      "timestamp_end": 4.0,
+      "position": "center",
+      "animation": "scaleIn",
+      "has_emoji": false
+    },
+    {
+      "type": "phrase",
+      "text": "Frase marcante do video",
+      "timestamp_start": 8.0,
+      "timestamp_end": 11.0,
+      "position": "bottom-center",
+      "animation": "fadeInUp",
+      "has_emoji": true,
+      "emoji": "🔥"
+    },
+    {
+      "type": "bullet_list",
+      "items": ["Item 1", "Item 2", "Item 3"],
+      "timestamp_start": 15.0,
+      "timestamp_end": 20.0,
+      "position": "center-left",
+      "animation": "slideInLeft",
+      "stagger_delay": 0.3
+    },
+    {
+      "type": "effect",
+      "effect_name": "zoomPulse",
+      "timestamp": 22.5,
+      "duration": 0.3
+    }
+  ],
+  "max_effects": 3,
+  "notes": "Este e um exemplo. O sistema gera automaticamente baseado na analise do video."
+}

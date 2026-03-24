@@ -1,0 +1,63 @@
+# Zeus Media - Configuracoes Padrao
+# Este arquivo contem os valores default antes do onboarding
+
+system:
+  name: "Zeus Media"
+  version: "1.0.0"
+  language: "pt-BR"
+
+defaults:
+  carousel:
+    format: "1080x1350"
+    max_slides: 10
+    safe_zone_top: 200
+    safe_zone_bottom: 200
+    safe_zone_lateral: 80
+    grain_opacity: 0.4
+
+  video:
+    max_effects: 3
+    phrase_duration_min: 2
+    phrase_duration_max: 4
+    gap_between_phrases: 1
+    hook_appear_at: 0.5
+    max_phrases_per_60s: 8
+
+  icons:
+    library_size: 100
+    grid_size: "24x24"
+    categories:
+      - pessoas
+      - comunicacao
+      - acao
+      - valor
+      - processo
+      - tempo
+      - conteudo
+      - seguranca
+      - alerta
+      - dados
+
+  hashtags:
+    total: 15
+    niche_specific: 5
+    theme_related: 5
+    popular: 5
+
+  quality_gate:
+    carousel_checks: 10
+    video_checks: 12
+    critical_fail_blocks: true
+
+# Template de cores padrao (preto e branco)
+default_colors:
+  g1: "#333333"
+  g2: "#666666"
+  g_accent: "#CCCCCC"
+  bg: "#0A0A0A"
+  bg_alt: "#111111"
+  bg_card: "#1A1A1A"
+  bg_light: "#F5F5F5"
+  txt_light: "#E0E0E0"
+  txt_dark: "#1A1A1A"
+  txt_muted: "#888888"

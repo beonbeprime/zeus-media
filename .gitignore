@@ -1,0 +1,16 @@
+# Assets gerados (pesados, nao versionar)
+assets/carousels/
+assets/videos/
+assets/exports/
+assets/icons/library/
+
+# Configuracao pessoal (tem dados da pessoa)
+config/brand-profile.yaml
+config/brand-voice.md
+config/icon-registry.md
+
+# Sistema
+.env
+node_modules/
+.DS_Store
+Thumbs.db
