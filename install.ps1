@@ -1,6 +1,6 @@
 # Zeus Media - Instalador Automatico
 # Cole este comando no PowerShell:
-# irm https://raw.githubusercontent.com/beonbeprime/zeus-media/main/install.ps1 | iex
+# irm https://raw.githubusercontent.com/beonbeprime/zeus-media/master/install.ps1 | iex
 
 Write-Host ""
 Write-Host "============================================" -ForegroundColor Cyan
@@ -23,7 +23,7 @@ if (Test-Path $installPath) {
     Write-Host "[INFO] Zeus Media ja existe em $installPath" -ForegroundColor Yellow
     Write-Host "[INFO] Atualizando..." -ForegroundColor Yellow
     Set-Location $installPath
-    git pull origin main
+    git pull origin master
 } else {
     Write-Host "[INFO] Clonando Zeus Media..." -ForegroundColor Green
     git clone https://github.com/beonbeprime/zeus-media.git $installPath
