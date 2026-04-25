@@ -1,26 +1,19 @@
-# Zeus Media
+# Zeus Media — Squad de Carrosseis Instagram
 
-Sistema autonomo de producao de midia visual para Instagram.
-Cria carrosseis profissionais e edita videos com overlays visuais automaticamente.
+Sistema autônomo de produção de carrosseis para Instagram com 3 agentes de IA especializados.
 
-Funciona para qualquer pessoa, nicho ou segmento.
+Pesquisa tendências, cria os slides com copy completa e revisa qualidade antes de entregar.
 
-## O que faz
+## Requisito
 
-- Carrosseis para Instagram (feed, stories, reels)
-- Edicao de video com frases marcantes, ganchos e efeitos visuais
-- Geracao de paleta de cores personalizada
-- Biblioteca de 100 icones no seu estilo
-- Copy adaptada ao seu tom de comunicacao
-- Hashtags relevantes por post
-- Caption pronta para colar
+Claude Code — disponível em [claude.ai/code](https://claude.ai/code)
 
-## Instalacao (1 comando)
+## Instalação (1 comando)
 
 Abra o PowerShell e cole:
 
 ```powershell
-irm https://raw.githubusercontent.com/beonbeprime/zeus-media/main/install.ps1 | iex
+irm https://raw.githubusercontent.com/beonbeprime/zeus-media/master/install.ps1 | iex
 ```
 
 Ou clone manualmente:
@@ -28,45 +21,54 @@ Ou clone manualmente:
 ```bash
 git clone https://github.com/beonbeprime/zeus-media.git
 cd zeus-media
+claude
 ```
 
 ## Como usar
 
-1. Abra a pasta `zeus-media` no Claude Code
-2. O sistema vai fazer perguntas para configurar sua marca
-3. Responda todas as perguntas
-4. Mande um texto, audio ou video
-5. Escolha: carrossel ou video
-6. Receba o rascunho, aprove ou ajuste
-7. Exporte a versao final
+Após instalar, abra a pasta `zeus-media` no Claude Code e diga o tema:
 
-## Comandos rapidos
+> "carrossel sobre inteligência artificial para mentores"
 
-| Comando | O que faz |
-|---------|-----------|
-| /config | Mostra sua configuracao atual |
-| /cores | Mostra sua paleta de cores |
-| /estilo | Mostra estilo visual e tom |
-| /reset | Refaz o onboarding do zero |
-| /carrossel [tema] | Cria carrossel sobre o tema |
-| /video [descricao] | Edita video com overlays |
-| /icones | Mostra biblioteca de icones |
-| /hashtags [tema] | Gera hashtags para um tema |
+O squad faz o resto.
+
+## O que você recebe
+
+- 8 a 10 slides com headline + texto de suporte (40-80 palavras cada)
+- Direção visual por slide (cor de fundo, palavras em destaque, sugestão de foto)
+- Legenda completa com hook nos primeiros 125 caracteres
+- 5 a 15 hashtags (mix de nicho, médio e amplo)
+- Scorecard de qualidade com nota em 10 critérios
+
+## Os 3 Agentes
+
+| Agente | Função |
+|--------|--------|
+| Raul Radar | Pesquisa 8-12 notícias e rankeia as top 5 |
+| Carlos Carrossel | Cria os slides, legenda e hashtags |
+| Vera Veredito | Revisa com scorecard — aprova só se score >= 4.0 |
+
+## Pipeline de 9 Etapas
+
+1. Você define o tema
+2. Raul pesquisa notícias
+3. Você escolhe a notícia
+4. Carlos gera 5 ângulos emocionais
+5. Você escolhe o ângulo
+6. Carlos cria o carrossel completo
+7. Você aprova o conteúdo
+8. Vera faz a revisão de qualidade
+9. Aprovação final
 
 ## Estrutura
 
 ```
 zeus-media/
-  CLAUDE.md              <- Cerebro do sistema (lido automaticamente)
-  .claude/rules/         <- Regras de cor, carrossel, video, qualidade
-  agents/                <- Definicoes dos agentes
-  templates/             <- Templates HTML (preto e branco por padrao)
-  config/                <- Configuracoes e perfil da marca
-  assets/                <- Seus carrosseis, videos e icones gerados
-  docs/                  <- Guias e manuais
+  CLAUDE.md                      <- Cérebro do sistema
+  squads/instagram-carousel/
+    squad.yaml
+    agents/                      <- 3 agentes especializados
+    pipeline/steps/              <- 9 etapas do pipeline
+    pipeline/data/               <- Frameworks e critérios de qualidade
+    output/                      <- Carrosseis gerados
 ```
-
-## Requisitos
-
-- Claude Code (claude.ai/claude-code)
-- Opcional: API Key do Google AI Studio ou OpenAI (para geracao de imagens)

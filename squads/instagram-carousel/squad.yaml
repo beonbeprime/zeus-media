@@ -1,0 +1,43 @@
+name: "Carrossel Instagram"
+code: instagram-carousel
+description: "Squad de produção de carrosséis para Instagram. Pesquisa tendências, gera ângulos, cria conteúdo com copy persuasiva e revisa qualidade antes da entrega."
+version: "1.0.0"
+performance_mode: alta-performance
+language: "Português (Brasil)"
+
+skills:
+  - web_search
+  - web_fetch
+
+formats:
+  - instagram-feed
+
+data:
+  - pipeline/data/research-brief.md
+  - pipeline/data/domain-framework.md
+  - pipeline/data/quality-criteria.md
+  - pipeline/data/output-examples.md
+  - pipeline/data/anti-patterns.md
+  - pipeline/data/tone-of-voice.md
+
+pipeline:
+  max_review_cycles: 2
+  steps:
+    - id: research-focus
+      file: steps/step-01-research-focus.md
+    - id: research
+      file: steps/step-02-research.md
+    - id: news-selection
+      file: steps/step-03-news-selection.md
+    - id: generate-angles
+      file: steps/step-04-generate-angles.md
+    - id: angle-selection
+      file: steps/step-05-angle-selection.md
+    - id: create-carousel
+      file: steps/step-06-create-carousel.md
+    - id: content-approval
+      file: steps/step-07-content-approval.md
+    - id: review
+      file: steps/step-08-review.md
+    - id: final-approval
+      file: steps/step-09-final-approval.md
