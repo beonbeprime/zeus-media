@@ -4,6 +4,14 @@ assets/videos/
 assets/exports/
 assets/icons/library/
 
+# Producoes reais (videos pesados, nao versionar)
+squads/reels-zoom/producoes/
+squads/video-editor-magna/producoes/
+squads/reels-zoom-alternado/producoes/
+squads/video-cinematic/producoes/
+squads/*/output/
+squads/*/_versions/
+
 # Configuracao pessoal (tem dados da pessoa)
 config/brand-profile.yaml
 config/brand-voice.md

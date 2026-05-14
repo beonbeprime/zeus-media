@@ -1,0 +1,11 @@
+# Reels Zoom - dependencias Python
+# Instalar: pip install -r requirements.txt
+
+# Deteccao de rostos e landmarks (MediaPipe Face Mesh)
+mediapipe>=0.10.0
+
+# Processamento de video e imagem
+opencv-python>=4.8.0
+
+# Calculo numerico (mediana, media)
+numpy>=1.24.0

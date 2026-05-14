@@ -1,0 +1,52 @@
+# Template de Plano de Cenas — Cinematic Forge
+# Gerado por @cinematic-scene-director (Frame)
+
+meta:
+  titulo: ""
+  formato: VERTICAL  # VERTICAL | HORIZONTAL | QUADRADO
+  resolucao: "1080x1920"
+  nivel: N3
+  objetivo: COMERCIAL  # COMERCIAL | EDUCATIVO | INSTRUCIONAL
+  duracao_alvo: "60s"
+  total_cenas: 0
+  fps: 30
+
+cenas:
+  - id: 1
+    tipo: GANCHO  # GANCHO | DESENVOLVIMENTO | DADO | PROVA | CTA | ENCERRAMENTO
+    texto: "Texto narrado nesta cena"
+    duracao: 3.0  # segundos
+    visual:
+      descricao: "O que aparece visualmente: pessoa, objeto, ambiente"
+      emocao: "tensao | curiosidade | motivacao | urgencia | confianca"
+      movimento: "ZOOM-IN"  # ZOOM-IN | ZOOM-OUT | PAN-LEFT | PAN-RIGHT | STATIC
+      prompt_imagem: ""  # preenchido por @cinematic-image-gen
+    legenda:
+      texto: "Texto da legenda (mesmo ou resumido)"
+      palavras_destaque: []  # palavras em cor de destaque
+    audio:
+      texto_tts: "Texto exato para text-to-speech"
+      pausa_antes: 0.2  # segundos
+      pausa_depois: 0.3
+
+  - id: 2
+    tipo: DESENVOLVIMENTO
+    texto: ""
+    duracao: 4.0
+    visual:
+      descricao: ""
+      emocao: ""
+      movimento: "PAN-LEFT"
+      prompt_imagem: ""
+    legenda:
+      texto: ""
+      palavras_destaque: []
+    audio:
+      texto_tts: ""
+      pausa_antes: 0.2
+      pausa_depois: 0.3
+
+# Continuacao das cenas conforme roteiro...
+
+duracao_total_estimada: "0s"
+custo_estimado: "$0.00"

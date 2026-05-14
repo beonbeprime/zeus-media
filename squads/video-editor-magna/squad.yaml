@@ -1,0 +1,135 @@
+name: "ZEUS EDITOR"
+id: zeus-editor
+version: "1.0.0"
+description: "Squad autonomo de edicao de video no padrao conceitual Magna. Recebe video bruto e entrega MP4 editado com legendas, B-roll, icones animados, tratamento de imagem e corte de silencios."
+lead: "@video-editor-master"
+leadPersona: "Reel"
+
+domain: D2 # Interno Magna (futuro: D1 para clientes)
+
+visual_identity:
+  palette: "deluxe aristocratic"
+  colors:
+    gold1: "#8a7260"
+    gold2: "#c4a88a"
+    gold3: "#e0cdb8"
+    champagne: "#f0e6d8"
+    bg: "#040303"
+  fonts:
+    display: "Cormorant Garamond"  # deluxe usa Cormorant, NAO Playfair
+    body: "DM Sans"
+    caption: "DM Sans"  # legenda legivel
+  icons: "Magna Deluxe 300 (stroke 0.45, cantos vivos, square/miter)"
+  grain: true
+  style: "dark aristocratic deluxe"
+
+project_path: "C:/Users/Pichau/Desktop/magna-video-editor"
+
+agents:
+  # MAESTRO
+  - id: video-editor-master
+    persona: Reel
+    role: "Orquestrador do pipeline completo de edicao"
+    commands: ["*edit", "*draft", "*final", "*help"]
+
+  # PIPELINE (ordem de execucao)
+  - id: video-transcriber
+    persona: Ear
+    role: "Transcreve video com Whisper, gera timestamps por palavra"
+    step: 1
+
+  - id: silence-cutter
+    persona: Trim
+    role: "Detecta e corta silencios, repeticoes, vicios de linguagem"
+    step: 2
+
+  - id: keyword-detector
+    persona: Scan
+    role: "Analisa transcricao, identifica momentos de B-roll, icones, destaques"
+    step: 3
+
+  - id: image-treater
+    persona: Tone
+    role: "Ajusta contraste, saturacao, brilho e temperatura (estilo cinematico)"
+    step: 4
+
+  - id: caption-stylist
+    persona: Type
+    role: "Formata legendas: 1-3 palavras centralizadas, highlight em rosegold"
+    step: 5
+
+  - id: broll-animator
+    persona: Motion
+    role: "Cria B-rolls conceituais: comparacoes, conceitos, texto animado"
+    step: 5
+
+  - id: hook-creator
+    persona: Snap
+    role: "Cria gancho de abertura: frase impactante destacada"
+    step: 5
+
+  # QUALITY
+  - id: spelling-checker
+    persona: Spell
+    role: "Verifica ortografia e acentuacao em TODAS as legendas e textos"
+    step: 6
+
+  - id: timing-checker
+    persona: Sync
+    role: "Verifica timing, gaps, sobreposicoes, alinhamento audio-legenda"
+    step: 7
+
+  # RENDER
+  - id: video-renderer
+    persona: Render
+    role: "Renderiza rascunho (720p baixo bitrate) e versao final (1080p alta)"
+    step: 8
+
+pipeline_steps:
+  1: "Transcricao (Whisper)"
+  2: "Corte de silencios e erros"
+  3: "Deteccao de keywords e momentos"
+  4: "Tratamento de imagem"
+  5: "Geracao visual (legendas + B-roll + hook)"
+  6: "Verificacao ortografica"
+  7: "Verificacao de timing"
+  8: "Render (rascunho -> aprovacao -> final)"
+
+caption_rules:
+  font: "DM Sans"        # legivel, moderna, nao Playfair
+  weight: 600             # semi-bold para legibilidade
+  color: "#ffffff"        # branco puro
+  highlight_color: "rosegold gradient"
+  max_words: 3            # maximo por legenda
+  max_chars: 16           # maximo caracteres
+  position: "bottom"      # parte inferior
+  shadow: "difusa"        # sombra difusa atras para qualquer fundo
+  alignment: "center"     # centralizado horizontal
+  lines: 1                # uma linha apenas
+
+broll_rules:
+  max_interval: 8         # segundos minimos entre B-rolls
+  max_duration: 5         # segundos maximo de B-roll
+  min_duration: 1.5       # segundos minimo
+  bg_modes: ["dark", "blur"]  # fundo preto Magna ou video borrado
+  style: "conceitual"     # animacoes conceituais, NAO banco de imagens
+  icons: "Magna Library"  # mesma biblioteca dos carrosseis
+
+icon_rules:
+  position: "below-chin"  # NUNCA no rosto
+  max_interval: 6         # segundos entre icones
+  duration: 1.5           # segundos de exibicao
+  animation: "spring + breathe"  # identico ao magna-fb-video
+  shadow: true            # sombra difusa para legibilidade
+
+render_modes:
+  draft:
+    resolution: "720p"
+    crf: 28
+    scale: 0.67
+    purpose: "Preview rapido para aprovacao"
+  final:
+    resolution: "1080p"
+    crf: 18
+    scale: 1.0
+    purpose: "Versao final para publicacao"

@@ -1,0 +1,44 @@
+{
+  "_fullsafe": true,
+  "_updated": "2026-03-20T20:47:02.475Z",
+  "files": {
+    "SQUAD.md": {
+      "current_version": 2,
+      "versions": [
+        {
+          "v": 1,
+          "date": "2026-03-20T18:19:15.971Z",
+          "note": "antes de adicionar 5 agentes novos",
+          "path": "_versions\\SQUAD.v1.md",
+          "size_kb": 5
+        },
+        {
+          "v": 2,
+          "date": "2026-03-20T20:47:02.421Z",
+          "note": "pre-tutorial-mode",
+          "path": "_versions\\SQUAD.v2.md",
+          "size_kb": 6.6
+        }
+      ]
+    },
+    "README.md": {
+      "current_version": 2,
+      "versions": [
+        {
+          "v": 1,
+          "date": "2026-03-20T18:19:21.071Z",
+          "note": "antes de adicionar 5 agentes novos",
+          "path": "_versions\\README.v1.md",
+          "size_kb": 3.1
+        },
+        {
+          "v": 2,
+          "date": "2026-03-20T20:47:02.474Z",
+          "note": "pre-tutorial-mode",
+          "path": "_versions\\README.v2.md",
+          "size_kb": 4
+        }
+      ]
+    }
+  }
+}

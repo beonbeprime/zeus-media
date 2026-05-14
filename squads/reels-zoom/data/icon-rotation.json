@@ -1,0 +1,35 @@
+{
+  "_note": "Registrar TODOS os icones usados em cada video. Nunca repetir nos ultimos 5 videos.",
+  "_instrucao": "ANTES de escolher iconId para um novo video: ler este arquivo, listar icones usados nos ultimos 5 videos, escolher apenas icones que NAO aparecem nessa lista.",
+  "never_repeat_within": 5,
+  "videos": [
+    {
+      "date": "2026-03-27",
+      "guest": "Nanjaira",
+      "tipo": "ZOOM",
+      "file": "reels-nanjaira-v16",
+      "status": "APROVADO",
+      "icons_used": ["lightbulb", "dollar", "target", "star", "gear", "crown", "rocket"],
+      "layouts_used": ["V05", "V02", "V02", "V01", "V03", "V02", "V01", "S01"],
+      "hook": "Primeiro, você vende"
+    },
+    {
+      "date": "2026-03-27",
+      "guest": "Rafael",
+      "tipo": "ZOOM",
+      "file": "draft-v35",
+      "status": "APROVADO",
+      "icons_used": ["users", "document", "clock"],
+      "layouts_used": ["V05", "V01", "V02", "V01"],
+      "hook": "Aluno entrou no meio da mentoria?"
+    }
+  ],
+  "available_pool": [
+    "crown", "trending-up", "dollar", "star", "gear", "rocket", "clock",
+    "lightbulb", "target", "shield", "zap", "heart", "key", "users", "user",
+    "bell", "unlock", "megaphone", "layout", "document", "eye", "message",
+    "funnel", "puzzle", "layers", "diamond", "mic", "hand", "book", "calendar"
+  ],
+  "_blocked_next_video": ["lightbulb", "dollar", "target", "star", "gear", "crown", "rocket", "users", "document", "clock"],
+  "_available_next_video": ["trending-up", "shield", "zap", "heart", "key", "user", "bell", "unlock", "megaphone", "layout", "eye", "message", "funnel", "puzzle", "layers", "diamond", "mic", "hand", "book", "calendar"]
+}

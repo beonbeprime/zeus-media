@@ -1,0 +1,353 @@
+name: "REELS ZOOM"
+id: reels-zoom
+version: "2.0.0"
+description: "Squad autonomo para producao de Reels verticais em 3 modalidades: ZOOM (gravacao de call horizontal, 2 rostos), VERTICAL (video ja em 9:16 gravado no celular) e MOTION (so audio, full motion graphics). Padrao visual UNICO Magna em todos os tipos. Transcreve, analisa, extrai gancho viral, organiza narrativa, renderiza via Remotion e entrega MP4 final."
+lead: "@reels-zoom-master"
+leadPersona: "Clip"
+
+domain: D2 # Interno Magna
+
+video_types:
+  ZOOM:
+    trigger: "video do zoom, call no zoom, gravei uma call, mentoria VIP, pasta Zoom"
+    input: "Gravacao Zoom horizontal 16:9, 2 rostos"
+    diferencial: "Reenquadra rostos via reframe.py, layout 25/25/25/25"
+    referencias_aprovadas:
+      - "squads/reels-zoom/producoes/nanjaira/rascunhos/reels-nanjaira-v16.mp4"
+      - "squads/reels-zoom/producoes/rafael/final/draft-v35.mp4"
+  VERTICAL:
+    trigger: "video do celular, gravo na vertical, anuncio vertical"
+    input: "Video ja em 9:16 ou similar, 1 pessoa"
+    diferencial: "Sem reenquadramento, B-rolls sobre o rosto existente"
+  MOTION:
+    trigger: "so audio, sem rosto, motion video, voz com graficos"
+    input: "Arquivo de audio ou texto de roteiro"
+    diferencial: "100% motion graphics, legendas continuas, sem rosto"
+
+input_format:
+  ZOOM:
+    source: "Gravacao Zoom (horizontal, 16:9)"
+    typical_resolution: "1920x1080"
+    content: "Reuniao com 2 pessoas visiveis"
+    audio: "Conversa, geralmente Allysson fala mais"
+  VERTICAL:
+    source: "Video vertical gravado no celular"
+    typical_resolution: "1080x1920 ou similar"
+  MOTION:
+    source: "Audio .mp3/.wav ou texto de roteiro"
+
+output_format:
+  aspect: "9:16"
+  resolution: "1080x1920"
+  duration_target: "30-90 segundos"
+  style: "Reels vertical padrao Magna, gancho viral, B-rolls animados, CTA foto+handle"
+
+visual_identity:
+  palette: "deluxe aristocratic"
+  colors:
+    gold1: "#8a7260"
+    gold2: "#c4a88a"
+    gold3: "#e0cdb8"
+    champagne: "#f0e6d8"
+    bg: "#040303"
+  fonts:
+    display: "Cormorant Garamond"
+    body: "DM Sans"
+    caption: "DM Sans"
+  icons: "Magna Deluxe 300 (stroke 0.45, cantos vivos, square/miter)"
+  grain: true
+  style: "dark aristocratic deluxe"
+
+project_path: "C:/Users/Pichau/Desktop/magna-reels-zoom"
+
+agents:
+  # =============================================
+  # MAESTRO
+  # =============================================
+  - id: reels-zoom-master
+    persona: Clip
+    role: "Orquestrador do pipeline completo. Recebe video Zoom, coordena todos os agentes e entrega Reels vertical pronto."
+    commands: ["*reels", "*draft", "*final", "*help"]
+
+  # =============================================
+  # FASE 1: TRANSCRICAO E ANALISE
+  # =============================================
+  - id: zoom-transcriber
+    persona: Ear
+    role: "Transcreve o video completo com Whisper. Gera timestamps por palavra e por frase. Identifica quem esta falando (speaker diarization quando possivel)."
+    step: 1
+    output: "transcricao completa com timestamps, separacao por speaker"
+
+  - id: content-analyzer
+    persona: Lens
+    role: "Analisa a transcricao completa. Classifica cada frase por: (1) peso de impacto (0-10), (2) tipo (dado, opiniao, instrucao, exemplo, transicao, redundancia), (3) potencial de gancho. Marca frases redundantes, vicios de linguagem, repeticoes e informacoes desnecessarias."
+    step: 2
+    output: "mapa de frases classificadas com peso, tipo e marcacoes"
+    rules:
+      - "Identificar vicios de linguagem: 'ne', 'tipo', 'entendeu', 'basicamente', 'enfim'"
+      - "Marcar repeticoes: mesma ideia dita mais de uma vez"
+      - "Marcar silencios maiores que 1.5 segundos"
+      - "Marcar informacoes tangenciais que nao agregam"
+
+  # =============================================
+  # FASE 2: EXTRACAO DE GANCHO E NARRATIVA
+  # =============================================
+  - id: hook-extractor
+    persona: Snap
+    role: "Analisa TODAS as frases classificadas pelo content-analyzer. Seleciona a frase com maior potencial de gancho (pode estar no meio, no final ou em qualquer ponto do video). A frase de gancho DEVE ser: curta (max 8 segundos), impactante, gerar curiosidade ou entregar um dado forte. Gera 3 opcoes de gancho rankeadas."
+    step: 3
+    output: "3 opcoes de gancho com timestamp original e justificativa"
+    rules:
+      - "Frases com numeros concretos (R$7.000, 10 mentorias, 70 mil) tem prioridade"
+      - "Afirmacoes fortes e contraintuitivas tem prioridade"
+      - "NUNCA usar frase generica como gancho (ex: 'voce precisa vender mentoria')"
+      - "O gancho NAO precisa ser a primeira frase do video original"
+
+  - id: narrative-architect
+    persona: Arc
+    role: "Recebe o gancho escolhido e a transcricao classificada. Reorganiza a narrativa para criar um Reels coerente: (1) Gancho no topo, (2) contexto rapido, (3) desenvolvimento, (4) conclusao/CTA. Remove partes redundantes, silencios, vicios. Garante que a transicao do gancho para o resto do conteudo faz sentido narrativo, mesmo que as partes venham de momentos diferentes do video."
+    step: 4
+    output: "roteiro final do Reels com sequencia de trechos (timestamp inicio-fim de cada trecho)"
+    rules:
+      - "A narrativa final DEVE ser coerente, nao pode parecer cortada"
+      - "Se o gancho vem do meio/final, a transicao para o proximo trecho deve ser suave"
+      - "Duracao alvo: 30-90 segundos"
+      - "Priorizar trechos com maior peso de impacto"
+      - "Eliminar 100% das repeticoes"
+      - "Eliminar vicios de linguagem quando possivel (corte seco)"
+      - "Manter ritmo rapido, sem pausas longas"
+
+  - id: repetition-guard
+    persona: Filter
+    role: "Revisor especializado em detectar repeticoes que o narrative-architect pode ter deixado passar. Compara trecho por trecho da narrativa montada e garante que nenhuma ideia e dita duas vezes. Se encontrar, sugere qual versao manter (a mais impactante)."
+    step: 5
+    output: "narrativa revisada sem repeticoes, com log de remocoes"
+
+  # =============================================
+  # FASE 3: DETECCAO E REENQUADRAMENTO DE ROSTOS
+  # =============================================
+  - id: face-detector
+    persona: Eye
+    role: "Analisa o video original frame por frame (ou a cada 0.5s). Detecta a posicao dos rostos das duas pessoas. Mapeia: (1) bounding box de cada rosto, (2) quem esta falando em cada momento, (3) posicao relativa (quem fica em cima, quem fica embaixo no reels vertical)."
+    step: 6
+    output: "mapa de posicoes de rostos por timestamp, speaker identification"
+    rules:
+      - "Allysson (carequinha) geralmente fica na parte de cima do reels"
+      - "O convidado/aluno fica na parte de baixo"
+      - "Se so 1 pessoa esta falando, pode ocupar mais espaco"
+      - "Margem minima de 10% ao redor do rosto (nao cortar justo demais)"
+
+  - id: face-reframer
+    persona: Crop
+    role: "Recebe o mapa de rostos e o roteiro final. Recorta e reenquadra cada segmento do video para formato 9:16 vertical. Os dois rostos ficam empilhados verticalmente (Allysson em cima, convidado embaixo). Aplica transicao suave quando muda de enquadramento. Sem bordas pretas."
+    step: 7
+    output: "video reenquadrado em 9:16 com rostos posicionados"
+    rules:
+      - "ZERO espacos pretos / letterbox"
+      - "Crop inteligente: foca no rosto + ombros"
+      - "Quando so 1 pessoa fala: pode fazer zoom leve nela (destaque)"
+      - "Transicao entre enquadramentos: fade suave de 0.2s"
+      - "Se o video Zoom tem speaker view (1 rosto grande), adaptar layout"
+      - "Se o video Zoom tem gallery view (2 rostos lado a lado), empilhar"
+
+  - id: face-centering-qa
+    persona: Align
+    role: "Verifica se o rosto esta CENTRALIZADO dentro do crop usando MediaPipe Face Mesh (468 landmarks). Mede posicao exata dos olhos, calcula desvio em relacao a 35% do topo do slot, corrige crop_y e crop_x automaticamente."
+    step: 7.5
+    rules:
+      - "METODO: landmarks dos olhos via MediaPipe (LEFT_EYE + RIGHT_EYE indices)"
+      - "Olhos devem ficar entre 30% e 42% do topo do slot (alvo: 35%)"
+      - "Centro horizontal: face_cx deve estar entre 45% e 55% da largura do slot"
+      - "Tolerancia horizontal: diff_esq_dir < 15px"
+      - "Sem scan de brilho para detectar rosto (metodo antigo, impreciso)"
+      - "Implementacao: squads/reels-zoom/scripts/reframe.py funcao eye_centered_crop()"
+
+  - id: reframe-qa
+    persona: Check
+    role: "Confere se o reenquadramento esta correto: (1) rostos visiveis e centralizados, (2) sem corte de cabeca/queixo, (3) sem bordas pretas, (4) proporcao 9:16 exata, (5) transicoes suaves."
+    step: 8
+    output: "relatorio de QA com aprovacao ou lista de ajustes"
+
+  # =============================================
+  # FASE 4: VISUAL (legendas, highlights, motion)
+  # =============================================
+  - id: caption-stylist
+    persona: Type
+    role: "Gera legendas sincronizadas no padrao Magna: 1-3 palavras por vez, highlight em rosegold nas palavras de destaque, fundo difuso. Posicao entre os dois rostos ou na parte inferior."
+    step: 9
+    output: "arquivo de legendas .ass com timing e estilo"
+
+  - id: highlight-animator
+    persona: Glow
+    role: "Quando o narrative-architect marca uma frase como 'momento chave', este agente cria um efeito visual: leve zoom in (1.05x em 0.5s), pulse na legenda, ou flash sutil. Usado com moderacao (max 3 por reels)."
+    step: 9
+    output: "lista de efeitos visuais com timestamps"
+    rules:
+      - "Maximo 3 highlights por reels"
+      - "Efeito sutil, nao distrai do conteudo"
+      - "Zoom in leve (1.03-1.06x) no rosto de quem esta falando"
+
+  # =============================================
+  # FASE 5: QUALITY GATES
+  # =============================================
+  - id: spelling-checker
+    persona: Spell
+    role: "Verifica ortografia e acentuacao em TODAS as legendas e textos overlays. Zero tolerancia para erros."
+    step: 10
+
+  - id: timing-checker
+    persona: Sync
+    role: "Verifica sincronizacao audio x legenda x video. Confere que nao ha gaps, sobreposicoes ou desalinhamento."
+    step: 11
+
+  - id: final-qa
+    persona: Gate
+    role: "Gate FINAL antes de entregar. Verifica 12 pontos."
+    step: 12
+    checklist:
+      - "Gancho forte nos primeiros 3 segundos"
+      - "Narrativa coerente (nao parece cortada)"
+      - "Zero repeticoes de ideias"
+      - "Rostos visiveis e bem enquadrados em todo o video"
+      - "Sem bordas pretas"
+      - "Proporcao 9:16 exata (1080x1920)"
+      - "Legendas sincronizadas e sem erros"
+      - "Acentuacao 100% correta"
+      - "Duracao entre 30-90 segundos"
+      - "Audio limpo, sem cortes bruscos"
+      - "Transicoes suaves entre trechos"
+      - "Identidade visual Magna mantida"
+
+  # =============================================
+  # RENDER
+  # =============================================
+  - id: reels-renderer
+    persona: Render
+    role: "Renderiza rascunho (720p) para aprovacao e versao final (1080p) para publicacao."
+    step: 13
+
+pipeline_steps:
+  1: "Transcricao completa (Whisper + timestamps + speaker)"
+  2: "Analise de conteudo (classificacao de frases, peso, tipo)"
+  3: "Extracao de gancho (3 opcoes rankeadas)"
+  4: "Arquitetura narrativa (reorganiza, remove redundancias)"
+  5: "Guard de repeticao (ultima verificacao)"
+  6: "Deteccao de rostos (mapa de posicoes)"
+  7: "Reenquadramento 9:16 (crop, empilha rostos)"
+  7.5: "Centralizacao de rostos (analisa posicao, ajusta offset)"
+  8: "QA de reenquadramento"
+  9: "Legendas + highlights visuais"
+  10: "Verificacao ortografica"
+  11: "Verificacao de timing"
+  12: "Gate final (12 pontos)"
+  13: "Render (rascunho 720p -> aprovacao -> final 1080p)"
+
+caption_rules:
+  mode: "continuous"  # Legenda cobre TODA a fala, 1-3 palavras por vez
+  continuous_subtitle: true  # Obrigatorio - toda palavra falada tem caption correspondente
+  words_per_caption: "1-3"  # blocos de 1 a 3 palavras (nao frases inteiras)
+
+  styles:
+    caption_standard:
+      font: "DM Sans"  # fonte de legenda aprovada
+      weight: 700
+      size: "28-36px"
+      color: "#f0e0d8"  # champagne
+      highlight_color: "#d4a08a"  # rosegold rg2 para palavras de destaque (max 3 por reels)
+      max_words: 3
+    number_impact:
+      number_size: "72px"
+      context_font: "DM Sans"
+      context_size: "18px"
+      gradient: "#b8887a, #d4a08a, #f0c8b0"
+
+  animation:
+    styles: ["slideUp", "slideLeft", "slideRight", "scaleUp", "blur-in", "slideDown"]
+    spring: { damping: 14, stiffness: 60 }
+    duration_on_screen: "1.5-3s"
+    rule: "nunca 2 animacoes iguais seguidas"
+
+  position: "area preta inferior (75%) ou superior (25%)"
+  never_over_faces: true
+  shadow: "difusa"
+
+reframe_rules:
+  layout: "stacked-centered"  # rostos empilhados, colados, centralizados
+  standard: "PADRAO FIXO para todo video de 2 pessoas em Reels"
+  implementation: "squads/reels-zoom/scripts/reframe.py"  # SCRIPT CANONICO - sempre usar
+  install: "pip install -r squads/reels-zoom/scripts/requirements.txt"
+
+  centering_method: "mediapipe_eye_landmarks"  # NUNCA usar scan de brilho
+  eye_position_target: "35%"  # olhos a 35% do topo de cada slot (regra dos tercos)
+  eye_tolerance_pct: "30-42%"  # faixa aceitavel
+
+  frame_distribution:
+    padding_top: "25%"      # 320px em 1280, 480px em 1920
+    face_1_host: "25%"      # 320px em 1280, 480px em 1920
+    face_2_guest: "25%"     # 320px em 1280, 480px em 1920
+    padding_bottom: "25%"   # 320px em 1280, 480px em 1920 (area de legenda)
+
+  crop_strategy:
+    face_crop_width: "rosto_largura * 1.7-2.0"
+    face_crop_height: "calculada automaticamente pelo reframe.py"
+    centered_on: "posicao dos olhos (MediaPipe landmarks)"
+    crop_y_formula: "ey - 0.35 * crop_h  # olhos a 35% do topo"
+    crop_x_formula: "face_cx - crop_w / 2  # centralizado horizontalmente"
+    scale_method: "scale=W:-2  # PROPORCIONAL, nunca scale=W:H fixo"
+    scale_to: "largura total do frame (720 draft, 1080 final)"
+
+  allowed_cuts:
+    top_of_head: "ate 20% do cranio pode ser cortado"
+    shoulders: "corte parcial ok"
+    background: "cortar tudo que nao e rosto"
+
+  forbidden_cuts:
+    eyes: "SEMPRE visiveis"
+    mouth: "SEMPRE visivel"
+    chin: "preferir manter, corte leve tolerado"
+
+  gap_between_faces: 0  # ZERO pixels, colados
+  background_color: "#000000"  # preto puro
+
+  top_face: "host (quem fala mais, geralmente Allysson)"
+  bottom_face: "convidado/aluno"
+
+render_modes:
+  draft:
+    resolution: "720p vertical (720x1280)"
+    crf: 28
+    purpose: "Preview rapido para aprovacao"
+  final:
+    resolution: "1080p vertical (1080x1920)"
+    crf: 18
+    purpose: "Versao final para publicacao no Instagram"
+
+narrative_rules:
+  max_duration: 90  # segundos
+  min_duration: 30  # segundos
+  hook_max_duration: 8  # segundos para o gancho
+  max_repetitions: 0  # zero repeticoes permitidas
+  vices_to_cut: ["ne", "tipo", "entendeu", "basicamente", "enfim", "assim", "na verdade"]
+  silence_threshold: 1.5  # segundos, cortar acima disso
+
+config_docs:
+  # CONSULTAR ANTES DE CADA VIDEO - ordem de leitura
+  video_types: "squads/reels-zoom/config/video-types.md"
+  visual_standard: "squads/reels-zoom/config/visual-standard-military.md"
+  layout_variations: "squads/reels-zoom/config/layout-variations.md"
+  viral_hook_protocol: "squads/reels-zoom/config/viral-hook-protocol.md"
+  errors_learned: "squads/reels-zoom/config/errors-learned.md"
+  guarantee_checklist: "squads/reels-zoom/config/GUARANTEE-CHECKLIST.md"
+  icon_rotation: "squads/reels-zoom/data/icon-rotation.json"
+
+production_rules:
+  # REGRAS CRITICAS QUE O SISTEMA SEMPRE VIOLA - CONSULTAR ANTES
+  - "STEP 0: Identificar o tipo de video (ZOOM/VERTICAL/MOTION) antes de qualquer acao"
+  - "STEP 1: Ler icon-rotation.json, verificar blocked_next_video antes de escolher icones"
+  - "STEP 2: Ler layout-variations.md, planejar variacao de layouts antes de montar edit-project"
+  - "STEP 3: Gerar gancho via viral-hook-protocol.md, apresentar 3 opcoes, aguardar aprovacao"
+  - "STEP 4: Para ZOOM: usar reframe.py canonico, NUNCA reenquadrar na mao"
+  - "STEP 5: Captions CURADOS (8-10 frases-chave), NAO palavra-por-palavra (exceto MOTION)"
+  - "STEP 6: Renderizar SEMPRE via Remotion MagnaEditV2, NUNCA PIL ou canvas"
+  - "STEP 7: Atualizar icon-rotation.json com icones usados apos cada video"
+  - "STEP 8: Registrar video em icon-rotation.json com status APROVADO so apos aprovacao do usuario"

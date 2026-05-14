@@ -1,0 +1,110 @@
+name: cutflow-editor
+displayName: CutFlow Editor Squad
+description: Squad dedicado ao editor de video web CutFlow. Previne problemas recorrentes de exportacao, formato, resolucao e qualidade.
+domain: D0
+status: active
+
+agents:
+  - id: export-guard
+    name: Export Guard
+    persona: Shield
+    role: Valida TODA exportacao antes de entregar ao usuario
+    checks:
+      - Resolucao do canvas igual ao video original (nunca menor)
+      - Bitrate minimo 8 Mbps para Full HD
+      - Codec compativel com plataforma alvo (H.264 para Meta/Instagram/TikTok)
+      - Audio presente se video original tinha audio
+      - Duracao do export igual a duracao da timeline
+    triggers:
+      - Antes de iniciar MediaRecorder
+      - Depois de gerar blob, antes do download
+
+  - id: format-converter
+    name: Format Converter
+    persona: Codec
+    role: Converte WebM para MP4 H.264 automaticamente
+    specs:
+      codec_video: libx264
+      profile: high
+      level: "4.1"
+      crf: 18
+      preset: slow
+      codec_audio: aac
+      bitrate_audio: 192k
+      sample_rate: 44100
+      movflags: faststart
+    triggers:
+      - Pos-exportacao do MediaRecorder
+      - Endpoint /convert na VPS
+
+  - id: resolution-guard
+    name: Resolution Guard
+    persona: Pixel
+    role: Garante que a resolucao nunca e reduzida
+    rules:
+      - Canvas DEVE ser setado para resolucao original antes de gravar
+      - Se video original e 1080x1920, export DEVE ser 1080x1920
+      - Se video original e 1920x1080, export DEVE ser 1920x1080
+      - NUNCA reduzir resolucao para tamanho de preview
+      - Restaurar canvas para preview APOS gravacao
+    triggers:
+      - Inicio da exportacao
+      - Resize do canvas
+
+  - id: platform-validator
+    name: Platform Validator
+    persona: Check
+    role: Valida se o video atende specs da plataforma alvo
+    platforms:
+      instagram_reels:
+        aspect: "9:16"
+        resolution: 1080x1920
+        max_duration: 90
+        codec: h264
+        container: mp4
+      instagram_feed:
+        aspect: "1:1"
+        resolution: 1080x1080
+        max_duration: 60
+        codec: h264
+        container: mp4
+      youtube:
+        aspect: "16:9"
+        resolution: 1920x1080
+        max_duration: null
+        codec: h264
+        container: mp4
+      tiktok:
+        aspect: "9:16"
+        resolution: 1080x1920
+        max_duration: 180
+        codec: h264
+        container: mp4
+      meta_ads:
+        aspect: any
+        resolution: min 1080 no menor lado
+        max_duration: 240
+        codec: h264
+        container: mp4
+
+  - id: quality-scorer
+    name: Quality Scorer
+    persona: Grade
+    role: Avalia qualidade do video exportado
+    criteria:
+      - Resolucao >= original (score 0-25)
+      - Bitrate adequado ao conteudo (score 0-25)
+      - Audio sync correto (score 0-25)
+      - Color grading aplicado sem artefatos (score 0-25)
+    threshold: 70
+
+  - id: slider-guard
+    name: Slider Guard
+    persona: Range
+    role: Previne ajustes agressivos que destroem a imagem
+    rules:
+      - Max range dos sliders globais e 30
+      - Max range dos sliders HSL e 30
+      - Vinheta max 30
+      - Se usuario tenta valor fora do range, clampar silenciosamente
+      - Presets devem usar valores dentro do range
