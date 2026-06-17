@@ -22,3 +22,18 @@ config/icon-registry.md
 node_modules/
 .DS_Store
 Thumbs.db
+
+# Python (virtualenv e bytecode, nunca versionar)
+.venv/
+venv/
+env/
+**/__pycache__/
+*.py[cod]
+*.so
+*.pyd
+
+# Midia pesada
+*.mp4
+*.mov
+*.wav
+*.mp3

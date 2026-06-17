@@ -1,0 +1,185 @@
+# ZEUS-MOTION — Identidade Visual Oficial do Squad
+# Fonte da verdade para qualquer vídeo de marketing do próprio squad.
+# Agente responsável: brand-identity-guardian
+
+brand:
+  name: ZEUS-MOTION
+  tagline: "Motion design profissional no seu terminal."
+  category: squad-marketing
+
+colors:
+  # Fundos
+  background: "#050505"
+
+  # Texto — SEMPRE estes valores, sem exceção
+  text_primary: "#F5F5F7"
+  text_secondary: "rgba(245,245,247,0.52)"
+  text_label: "rgba(245,245,247,0.36)"
+
+  # Identidade da marca
+  brand_blue: "#0071E3"
+  brand_indigo: "#5856D6"
+
+  # Cores situacionais (só para glows e acentos, nunca para texto)
+  accent_problem: "#FF3B30"     # Apple Red — custo, dor
+  accent_solution: "#30D158"    # Apple Green — resultado, vitória
+  accent_neutral: "#0071E3"     # Brand Blue — neutro, transição
+  accent_cta: "#5856D6"         # Brand Indigo — identidade, CTA
+
+  # PROIBIDO usar como texto
+  forbidden_text_colors:
+    - "#FF6B6B"
+    - "#FF2D20"
+    - "any red gradient"
+    - "any orange"
+    - "random per-scene colors"
+
+glow:
+  # Todo glow tem opacidade máxima de 9-11%
+  # O glow BASE (brand_blue) está em TODA cena
+  base_opacity: 0.08        # glow base sempre presente
+  situational_opacity: 0.08 # glow situacional (problema/solução)
+  max_opacity: 0.11         # máximo absoluto (cena de celebração)
+
+  # Movimento obrigatório (sin/cos com frame)
+  movement_amplitude_x: 5   # pixels de variação horizontal
+  movement_amplitude_y: 4   # pixels de variação vertical
+  speed_x: 0.020            # frame * speed
+  speed_y: 0.015
+
+typography:
+  font_family: "Inter, -apple-system, BlinkMacSystemFont, sans-serif"
+
+  scale:
+    hero_xl:                # L0 — número/palavra dominante única
+      size: 120
+      weight: 900
+      tracking: "-0.03em"
+      color: text_primary
+
+    hero:                   # L1 — título principal
+      size: 96
+      weight: 800
+      tracking: "-0.025em"
+      color: text_primary
+
+    display:                # L2 — virada, CTA
+      size: 68
+      weight: 700
+      tracking: "-0.02em"
+      color: text_primary
+
+    body:                   # L3 — features, apoio
+      size: 34
+      weight: 400
+      tracking: "-0.01em"
+      color: text_primary
+
+    sub:                    # L4 — subtítulo, contexto
+      size: 32
+      weight: 300
+      tracking: "0"
+      color: text_secondary
+
+    label:                  # L5 — tag, uppercase, topo
+      size: 26
+      weight: 300
+      tracking: "+0.22em"
+      color: text_label
+      transform: uppercase
+
+layout:
+  canvas:
+    width: 1080
+    height: 1920
+    fps: 30
+
+  safe_zone:
+    horizontal: 88          # padding mínimo esquerda e direita
+    top_dead: 160           # não usar acima de 160px (câmera, notif)
+    bottom_dead: 288        # não usar abaixo de 1632px (UI Instagram)
+
+  zones:
+    label:
+      top: 200
+      bottom: 290
+
+    hero:
+      top: 380
+      bottom: 1100
+      vertical_center: 740  # ponto de ancora preferencial do hero
+
+    support:
+      top: 1120
+      bottom: 1450
+
+  padding_bottom_compensation: "15%"  # desloca conteúdo centrado para cima
+
+effects:
+  # Presentes em TODA cena de marketing do squad
+  vignette:
+    enabled: true
+    style: "radial-gradient(ellipse 72% 72% at 50% 50%, transparent 0%, rgba(0,0,0,0.65) 100%)"
+    z_index: 20
+
+  color_grade:
+    enabled: true
+    style: "rgba(0, 8, 20, 0.10)"
+    z_index: 21
+
+  light_leak:
+    enabled: true           # ativo apenas nos primeiros frames de cada cena
+    frames: [0, 6, 26]      # keyframes: 0 → 0.20 → 0
+    peak_opacity: 0.20
+    z_index: 25
+
+  cinematic_entry:
+    enabled: true
+    scale_from: 1.055
+    scale_to: 1.0
+    blur_from: 8
+    blur_to: 0
+    spring:
+      stiffness: 55
+      damping: 22
+
+scenes:
+  scene_1_problem:
+    name: "Hook — O Custo"
+    duration_frames: 90
+    glow_primary: "rgba(255,59,48,0.08)"       # Apple Red sutil
+    glow_secondary: "rgba(0,113,227,0.06)"      # Brand Blue base
+    hero_element: "R$ 800"
+    hero_style: hero_xl                         # 120px, branco, NÃO vermelho
+    label: "ZEUS-MOTION"
+    sub: "por vídeo num freelancer"
+
+  scene_2_turn:
+    name: "Virada — A Alternativa"
+    duration_frames: 90
+    glow_primary: "rgba(0,113,227,0.09)"        # Brand Blue
+    glow_secondary: "rgba(88,86,214,0.06)"      # Brand Indigo
+    hero_element: "WordByWord text"
+    hero_style: display
+
+  scene_3_proof:
+    name: "Prova — O que está incluso"
+    duration_frames: 150
+    glow_primary: "rgba(0,113,227,0.10)"        # Brand Blue forte
+    glow_secondary: "rgba(88,86,214,0.06)"
+    hero_element: "feature list"
+
+  scene_4_value:
+    name: "Valor — Antes vs Depois"
+    duration_frames: 120
+    glow_primary: "rgba(48,209,88,0.08)"        # Apple Green sutil
+    glow_secondary: "rgba(0,113,227,0.06)"      # Brand Blue base
+    hero_element: "Freelancer R$800 riscado → INCLUSO"
+    incluso_gradient: "linear-gradient(135deg, #30D158 0%, #25A24A 100%)"
+
+  scene_5_cta:
+    name: "CTA — Comente zeus-motion"
+    duration_frames: 180
+    glow_primary: "rgba(0,113,227,0.11)"        # Brand Blue máximo
+    glow_secondary: "rgba(88,86,214,0.09)"      # Brand Indigo
+    hero_element: "ZEUS-MOTION stamp + zeus-motion charByChar"

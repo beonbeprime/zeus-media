@@ -1,0 +1,12 @@
+# PHOTO-LYRICS pipeline (instalar no .venv do squad)
+# torch/torchaudio: instalar ANTES com --index-url https://download.pytorch.org/whl/cu128
+# (RTX 5060 Ti = Blackwell sm_120, exige wheels cu128, torch >= 2.7)
+demucs==4.0.1
+torchcodec  # torchaudio >= 2.9 exige torchcodec para salvar WAV (demucs save_audio)
+faster-whisper>=1.1.0
+ctranslate2>=4.6
+stable-ts>=2.17
+rapidfuzz
+soundfile
+librosa
+Pillow

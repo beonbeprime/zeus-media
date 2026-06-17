@@ -1,0 +1,50 @@
+name: KINETIC WAVE SQUAD
+lead: Wave
+domain: D1 + D2
+status: ATIVO
+tipo: motion video - foto + audio + wave circular
+
+description: |
+  Squad especialista em gerar vídeos no padrão MagnaKineticWave aprovado.
+  Recebe foto + audio, entrega vídeo vertical 1080x1920 com:
+  - Foto circular com anel de progresso rosegold
+  - Waveform circular reagindo ao audio
+  - Legenda word-by-word com blur/spring
+  - Ícones animados Magna
+  - Paleta e layout 100% Magna - nunca muda
+
+  Padrão aprovado: memory/magna-kinetic-wave-approved.md
+
+agents:
+  - Wave (Lead - orquestra tudo)
+  - Transcript (transcreve audio com Whisper, gera scenes[])
+  - Render (executa npx remotion render, entrega caminho)
+  - QC (verifica se layout e cores estao corretos antes de entregar)
+
+activation:
+  keywords:
+    - "foto + audio"
+    - "wave video"
+    - "depoimento video"
+    - "audio visual"
+    - "kinetic wave"
+    - "vídeo com foto e áudio"
+    - "vídeo de depoimento"
+    - "faz igual o wave"
+    - "mesmo estilo wave"
+    - "padrão wave"
+
+input_required:
+  - foto: arquivo de imagem (rosto, portrait ou quadrada)
+  - audio: arquivo MP3 com narração/depoimento
+
+output:
+  - MP4 1080x1920 30fps
+  - Caminho do arquivo na pasta magna-motion-render/
+
+rules:
+  - Seguir memory/magna-kinetic-wave-approved.md sem desvio
+  - NUNCA mudar paleta, fontes, layout, strokeWidth dos ícones
+  - FULLSAFE antes de editar MagnaKineticWave.tsx
+  - Apenas AUDIO_SRC e foto mudam entre renders
+  - Nomear output como: wave-{nome-pessoa}-v1.mp4

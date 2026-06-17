@@ -1,0 +1,4 @@
+{
+  "_doc": "Conceitos usados por producao (anti-repeticao entre anuncios). O Scena le antes de escolher e atualiza ao final.",
+  "producoes": {}
+}

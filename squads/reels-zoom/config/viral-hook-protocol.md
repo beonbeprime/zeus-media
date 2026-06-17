@@ -127,3 +127,22 @@ Ao finalizar um video, adicionar o gancho aprovado em `data/icon-rotation.json`:
 ```
 
 E no `config/errors-learned.md` se o gancho foi rejeitado e reescrito.
+
+
+---
+
+## ATUALIZAÇÃO: METODOLOGIA LUCAS MACEDO (aula 09/06/2026) - DOSE COMPLETA
+
+Documento mestre: `docs/metodologias/metodo-lucas-macedo-viralizacao.md`.
+
+Regras que passam a valer na extração de hook e na montagem narrativa dos Reels:
+
+1. Hook é MANCHETE, gancho é retenção. O hook extractor deve gerar manchetes estilo jornal de fofoca (Choquei): tensão, curiosidade, palavras como "vazou", "interno", nomes e números. Exemplo validado: "Vazou um vídeo interno do 'pastor' dos carros" (4 milhões de views).
+2. Gerar SEMPRE variações do mesmo hook para teste: palavra trocada, 1 linha vs 2 linhas, fundo branco vs preto, com e sem aspas. O mesmo vídeo vai ao Reels Test com hooks diferentes.
+3. NUNCA terminar o vídeo: cortar sem fechamento, sem tchau, sem conclusão. Bater a porta na cara. Alternativa avançada: loop (última frase conecta com a primeira).
+4. Sem CTA no corte feito para viralizar. A emoção é a CTA. CTA única e leve só em cortes de autoridade.
+5. Mapear a emoção por bloco do vídeo (começo, meio, fim). Se a emoção muda, a trilha pode mudar (até 3 músicas).
+6. Legenda simples, no meio, organizada. PROIBIDO letra colorida (remete a venda; venda não viraliza). Legendas de chamada pontuais valem mais que transcrição completa.
+7. Cortes de no máximo 30 segundos têm prioridade para contas sem histórico de viral.
+8. Critério de sucesso no Reels Test: 100 views no primeiro minuto; 3 a 5 mil em 10 minutos = potencial real.
+9. Formato episódio/série: cortes que deixam gosto de quero mais geram maratona de perfil, o que o algoritmo mais premia.

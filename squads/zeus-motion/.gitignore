@@ -1,0 +1,28 @@
+node_modules/
+dist/
+out/
+.remotion/
+
+# Brand files privados (Magna e outros clientes internos)
+brand-memory/magna.yaml
+brand-memory/allysson*.yaml
+brand-memory/_private/
+
+# Renders locais
+*.mp4
+*.webm
+*.mov
+renders/
+
+# Research e versoes internas
+_research/
+_versions/
+copy-layer/
+
+# Env
+.env
+.env.local
+
+# OS
+.DS_Store
+Thumbs.db

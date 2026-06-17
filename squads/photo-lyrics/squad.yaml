@@ -1,0 +1,132 @@
+# =============================================================
+# SQUAD: PHOTO LYRICS
+# Musica do Suno (PT-BR) -> Reels 1080x1920 onde cada frase da
+# letra aparece ESCRITA dentro de uma fotografia realista,
+# trocando em sincronia com a musica.
+# =============================================================
+
+name: "PHOTO LYRICS"
+id: photo-lyrics
+version: "1.0.0"
+description: >
+  Transforma musica (Suno, PT-BR) em Reels vertical 1080x1920: cada frase curta
+  da letra vira fotografia realista com a frase escrita na cena (garrafa,
+  tatuagem, parede, placa...), com troca sincronizada a musica. 3 modos:
+  A (midia pronta), B (squad gera imagens + usuario faz image-to-video manual
+  no Freepik), C (futuro: API image-to-video, adapter stub pronto).
+lead: "@photo-lyrics-master"
+leadPersona: "Verse"
+domain: D2
+
+activation:
+  keywords:
+    - "photo lyrics"
+    - "lyric photo"
+    - "video com musica e fotos"
+    - "musica em fotos"
+    - "letra em fotos"
+    - "clipe de fotos"
+    - "musica do suno em video"
+    - "reels da musica"
+  resume_keywords:
+    - "videos prontos"
+    - "continua o {projeto}"
+
+output_format:
+  aspect: "9:16"
+  resolution: "1080x1920"
+  fps: 30
+  duration: "igual a musica (ou trecho 15-60s para Reels/ads)"
+  text_zone: "2/3 superiores, sempre legivel"
+  style: "fotografia REAL, imperfeicoes naturais, zero cara de IA"
+
+agents:
+  - id: "@photo-lyrics-master"
+    persona: "Verse"
+    file: "agents/photo-lyrics-master.md"
+    role: "Orquestrador: detecta modo, mantem manifest.json, comunica status"
+  - id: "@lyric-transcriber"
+    persona: "Echo"
+    file: "agents/lyric-transcriber.md"
+    role: "Demucs + stable-ts align (letra fornecida) -> words.json"
+  - id: "@phrase-segmenter"
+    persona: "Versa"
+    file: "agents/phrase-segmenter.md"
+    role: "Frases curtas 2-4 palavras com timestamps -> phrases.json"
+  - id: "@creative-director"
+    persona: "Scena"
+    file: "agents/creative-director.md"
+    role: "Conceitos de cena variados (3 por frase, escolhe o melhor)"
+  - id: "@prompt-engineer"
+    persona: "Lex"
+    file: "agents/prompt-engineer.md"
+    role: "Prompt de foto EN (texto PT exato) + prompt de motion"
+  - id: "@image-producer"
+    persona: "Shutter"
+    file: "agents/image-producer.md"
+    role: "Gera imagens via lovart-py (ate 3 tentativas por cena)"
+  - id: "@vision-text-validator"
+    persona: "Acento"
+    file: "agents/vision-text-validator.md"
+    role: "GATE: le cada imagem por visao, texto caractere a caractere"
+  - id: "@media-librarian"
+    persona: "Archive"
+    file: "agents/media-librarian.md"
+    role: "Ingestao da pasta, visao da midia, matching frase x midia"
+  - id: "@sync-editor"
+    persona: "Tempo"
+    file: "agents/sync-editor.md"
+    role: "Timeline em frames, trims, fallback Ken Burns"
+  - id: "@render-master"
+    persona: "Forge"
+    file: "agents/render-master.md"
+    role: "Remotion CLI: draft 720 -> aprovacao -> final 1080"
+  - id: "@qc-inspector"
+    persona: "Seal"
+    file: "agents/qc-inspector.md"
+    role: "GUARANTEE-CHECKLIST + visao dos qc-frames antes de entregar"
+
+pipeline_steps:
+  1: "Deteccao de modo + manifest.json (se existe: RETOMAR de state.phase)"
+  2: "01_separate.py: Demucs separa o vocal (GPU)"
+  3: "02_align.py: alinhamento da letra sobre o vocal (word-level)"
+  4: "03_phrases.py: segmentacao em frases curtas com frames"
+  5: "Conceitos de cena (so MODO B/C): variacao consecutiva obrigatoria"
+  6: "Prompts de foto (EN, texto PT exato) + prompts de motion (so B/C)"
+  7: "generate-images.py via lovart-py (so B/C)"
+  8: "GATE validate-text.py + visao: acentos caractere a caractere"
+  9: "make-video-prompts.py -> prompts-video.md -> PAUSA awaiting-videos (B)"
+  10: "04_ingest.py + visao da midia + 05_manifest.py (matching, trims)"
+  11: "06_render.ps1 -Draft -> aprovacao do usuario -> 06_render.ps1 final"
+  12: "07_qc.py + visao dos qc-frames -> entrega"
+
+config_docs:
+  modes: "config/modes.md"
+  scene_concepts: "config/scene-concepts.md"
+  photo_prompt: "config/photo-prompt-standard.md"
+  motion_prompt: "config/motion-prompt-standard.md"
+  manifest_schema: "config/manifest-schema.md"
+  telegram_ux: "config/telegram-ux.md"
+  errors_learned: "config/errors-learned.md"
+  guarantee_checklist: "config/GUARANTEE-CHECKLIST.md"
+
+production_rules:
+  - "STEP 0: ler manifest.json; se existir, RETOMAR da fase gravada. Nunca reiniciar."
+  - "A musica NUNCA e cortada: um unico Audio no frame 0; cenas sao Sequences em frames."
+  - "Conversao segundos->frames SO em photo_lyrics/timing.py. O Remotion recebe frames prontos."
+  - "Prompt de imagem SEMPRE em ingles; o texto da cena SEMPRE em portugues entre aspas, EXATO."
+  - "NENHUMA imagem aprovada sem o gate de visao do texto (acentos, cedilha, til)."
+  - "Maximo 3 geracoes por cena; na 3a falha: trocar conceito ou overlay-fallback."
+  - "NUNCA travar por video faltante: imagem + Ken Burns e fallback automatico."
+  - "Texto nos 2/3 superiores; nunca repetir categoria de objeto em cenas consecutivas."
+  - "Video cru NUNCA renderiza: normalizar para CFR 30fps via 04_ingest.py antes."
+  - "Render SEMPRE via Remotion CLI (06_render.ps1). Nunca Studio. Nunca ffmpeg slideshow."
+  - "Draft 720p aprovado pelo usuario ANTES do render final 1080p."
+  - "FULLSAFE antes de editar qualquer arquivo existente (manifest tem historico em _versions/)."
+  - "VRAM 8GB: 01_separate e 02_align nunca em paralelo; large-v3 torch fp16 proibido."
+  - "generate-images.py roda com o python do SISTEMA (Playwright do lovart-py); o resto com .venv."
+
+environments:
+  audio_venv: ".venv (torch cu128 + demucs + stable-ts + faster-whisper)"
+  images: "python do sistema (lovart-py + Playwright, cookies em ~/.lovart)"
+  render: "remotion/ (npm, render via npx remotion render)"

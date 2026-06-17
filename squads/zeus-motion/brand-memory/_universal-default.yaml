@@ -1,0 +1,44 @@
+# Universal Default — Apple Minimal
+# Tema padrao para quem nao tem branding definido
+# Este arquivo e documentacao — o loader usa o objeto estatico em src/brand/loader.ts
+
+client: universal-default
+style: dark
+
+colors:
+  primary: "#FFFFFF"
+  secondary: "#888888"
+  accent: "#FFFFFF"
+  bg: "#000000"
+  text: "#FFFFFF"
+  text_secondary: "#888888"
+  highlight: "#E5E5E5"
+
+# Semanticos Apple
+  red: "#FF453A"
+  green: "#30D158"
+  blue: "#0071E3"
+  yellow: "#FFD60A"
+  purple: "#5856D6"
+  orange: "#FF9F0A"
+
+typography:
+  display: "Inter"
+  body: "Inter"
+  weight_display: 700
+  weight_body: 400
+
+motion_preset: elegant
+# elegant = spring stiffness 80, damping 18 (suave, profissional)
+# smooth  = spring stiffness 60, damping 20 (mais lento)
+# energetic = spring stiffness 150, damping 15 (rapido e vibrante)
+# bold    = spring stiffness 300, damping 20 (stamp, punch, snap)
+
+icon_style: line
+design_system: false
+
+# INSTRUCOES PARA USAR BRAND PERSONALIZADO:
+# 1. Copie este arquivo para brand-memory/nome-do-cliente.yaml
+# 2. Preencha com as cores e fontes do cliente
+# 3. Em src/brand/loader.ts, adicione a config no BRAND_REGISTRY
+# 4. Passe brand="nome-do-cliente" para qualquer composition

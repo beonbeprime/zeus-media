@@ -1,0 +1,659 @@
+name: zeus-motion
+version: "3.4.0"
+description: >
+  Squad de motion design profissional nivel After Effects com IA.
+  Fundado no BRABO Motion OS v9.0 — sistema operacional de animacao com 10 Mandamentos.
+  Pipeline completo: Diretor Brabo (spec visual) → Composition Builder (codigo) → Pre-render Gate (checklist) → Render.
+  Animacoes cinematograficas, tipografia palavra-por-palavra, Saida Quadrupla, spring configs validadas.
+  Tres estilos canonicos aprovados: AgenteArquiteto v13 (Apple Minimalista, narrador + trilha, 9 cenas),
+  MagnaCaptura v5 (B&W Premium Magna, texto puro, 10 cenas, 45.23s),
+  e MentoriaEstrutura21Dias v1 (Dark Luxury Tech Premium, narrador + trilha, 7 cenas).
+  Inspetores de easing AE (3 agentes dedicados) + guardiao de entradas e saidas profissionais.
+
+lead: zeus-motion-master
+category: motion-design
+domain: D2  # interno (uso da Magna e mentorados)
+
+methodology: BRABO Motion OS v9.0
+methodology_doc: squads/zeus-motion/docs/brabo-motion-os-v9.md
+diretor_brabo_doc: squads/zeus-motion/docs/diretor-brabo-workflow.md
+padrao_aprovado_doc: squads/zeus-motion/docs/padrao-aprovado-zeus-motion.md
+guia_video_narrado_doc: squads/zeus-motion/docs/guia-video-narrado.md
+post_mortem_doc: squads/zeus-motion/docs/post-mortem-agente-arquiteto.md
+erros_remotion_doc: squads/zeus-motion/ERROS-REMOTION.md
+validador_script: squads/zeus-motion/scripts/pre-render-validate.js
+referencia_canonica: squads/zeus-motion/src/compositions/AgenteArquiteto/index.tsx
+
+inherits_from:
+  - squads/_core-team/squad.yaml
+
+tech_stack:
+  - remotion ^4
+  - react 18
+  - "@remotion/shapes"
+  - "@remotion/motion-blur"
+  - "@remotion/animated-emoji"
+  - react-device-mockup
+  - typescript
+
+entry_point: squads/zeus-motion/
+compositions_path: squads/zeus-motion/src/compositions/
+modules_path: squads/zeus-motion/src/modules/
+brand_path: squads/zeus-motion/src/brand/
+brand_memory_path: squads/zeus-motion/brand-memory/
+docs_path: squads/zeus-motion/docs/
+
+output:
+  default_format: VERTICAL
+  default_fps: 30
+  render_path: "~/Desktop/zeus-motion-render"
+
+# ─── PIPELINE BRABO (ordem de execucao) ───────────────────────────────────────
+pipeline:
+  # ── FASE 0: NARRAÇÃO (obrigatória antes do brief se motion tem narrador) ──────
+  0_narracao:
+    condicao: se o motion tem narração (TTS ou arquivo de áudio)
+    etapas:
+      - gerar_audio: TTS via MiniMax ou Edge TTS → public/{nome}-narracao.mp3
+      - silencedetect: "ffmpeg -i public/{nome}.mp3 -af silencedetect=noise=-35dB:duration=0.15 -f null - 2>&1"
+      - mapear_timestamps: extrair inicio/fim de cada frase em segundos → converter para frames (x30)
+      - gerar_scene_map: array de { from, dur, text } para cada segmento de áudio
+    output: scene_map.json com timestamps exatos por cena — durationInFrames de TODA cena vem daqui
+
+  # ── FASE 1: BRIEF (usa o scene_map como base) ─────────────────────────────────
+  1_brief:
+    agent: diretor-brabo
+    input_obrigatorio: scene_map.json (gerado na fase 0, se houver narração)
+    regras_de_texto:
+      - max 5 palavras em fonte >= 52px por cena
+      - se trecho narrado tem 8+ palavras: dividir em 2+ cenas dentro do mesmo intervalo de áudio
+      - duração de cada cena = dur do scene_map (nunca inventar)
+      - texto na tela = palavras sendo narradas naquele exato intervalo de frames
+    output: spec visual completa (tabela cenas + especificacao por cena + transicoes)
+
+  2_brand:
+    agent: brand-configurator
+    output: brand-memory atualizado (cores, fonte, estilo)
+
+  3_build:
+    agent: composition-builder
+    output: arquivo .tsx da composition
+
+  4_review:
+    agents: [motion-reviewer, after-effects-technician, senior-quality-reviewer, profissionalismo]
+    output: feedback tecnico e visual
+
+  4b_easing_inspection:
+    agents: [easing-inspector-entrada, easing-inspector-saida, easing-inspector-curvas]
+    output: aprovacao das curvas AE (entradas, saidas, springs, stagger)
+
+  4c_transition_quality:
+    agents: [entrada-profissional, saida-profissional]
+    output: certificacao zero-elemento-seco (toda entrada e saida tem blur+fade+movimento)
+
+  4d_texto_sync:
+    agent: texto-dinamico
+    checks:
+      - max 5 palavras em fonte >= 52px por cena
+      - duração de cada cena vem do silencedetect
+      - texto corresponde ao trecho narrado no intervalo
+      - fonte minima 80px para texto de impacto
+    output: certificacao texto-dinamico + sync-narracao aprovados
+
+  5_gate:
+    agent: pre-render-gate
+    output: checklist BRABO aprovado (10 mandamentos)
+
+  6_render:
+    agent: render-engineer
+    output: arquivo .mp4 no caminho solicitado
+
+# ─── AGENTES (38 no total) ────────────────────────────────────────────────────
+agents:
+  # Tier 0 — Orquestracao e Direcao
+  - zeus-motion-master          # orquestrador geral do squad
+  - diretor-brabo               # spec visual completa antes do codigo (Diretor Brabo)
+  - concept-director            # conceito narrativo e filosofia visual do projeto
+  - narrative-architect         # estrutura dramatica das cenas
+  - profissionalismo            # gatekeeper de qualidade premium — bloqueia se parecer template/amador
+
+  # Tier 1 — Especialistas de Producao
+  - composition-builder         # monta compositions completas (.tsx)
+  - scene-director              # sequencia de cenas com Sequence/overlap
+  - text-animator               # textos animados (BlurReveal, TypeWriter, palavra a palavra)
+  - shape-drawer                # shapes SVG (setas, checkmarks, caixas, linhas)
+  - background-artist           # fundos e overlays (BackgroundBase 3 camadas)
+  - device-specialist           # mockups de dispositivos (iphone, android, ipad, browser)
+
+  # Tier 2 — Especialistas de Tecnica
+  - after-effects-technician    # tecnicas AE: orbit, dolly, crane, scanner, blur expand
+  - motion-choreographer        # coreografia de multiplos elementos em cena
+  - motion-primitives-specialist # primitivas BRABO: ci(), exitTo(), entryFrom(), mergeStyles()
+  - typography-master           # hierarquia tipografica, TV scales, kerning, word-by-word
+  - color-director              # paleta, gradientes, glow, noise layers
+  - layout-engineer             # safe zones, grid, posicionamento por cena
+  - ui-ux-designer              # interface de apps em mockups e demos
+
+  # Tier 2.5 — Inspetores de Easing AE (3 agentes dedicados, rodam em todo review)
+  - easing-inspector-entrada    # verifica entradas: out(cubic), blur proporcional, duracao por tamanho
+  - easing-inspector-saida      # verifica saidas: in(exp), Saida Quadrupla completa, direcao oposta
+  - easing-inspector-curvas     # verifica curvas globais: springs, stagger, ritmo, pausa por cena
+
+  # Tier 2.6 — Guardioes de Transicao (zero elementos secos)
+  - entrada-profissional        # certifica blur+fade+movimento em TODA entrada de elemento
+  - saida-profissional          # certifica Saida Quadrupla em TODA saida de elemento
+
+  # Tier 2.7 — Guardiao de Densidade de Texto
+  - texto-dinamico              # max 5 palavras em fonte grande por cena; bloqueia parede de palavras
+
+  # Tier 3 — Efeitos Especializados
+  - pan-quente-director         # efeitos cinematograficos: counters, stamps, confetes, shake
+  - celebration-specialist      # confeti, bounce-enter, impacto positivo
+  - transition-master           # transicoes entre cenas (dip-to-black, zoom-punch, whip-pan)
+  - background-motion-specialist # parallax, noise breathing, aurora, pulso radial
+  - cursor-choreographer        # movimento de cursores animados
+  - dataviz-animator            # graficos e metricas animadas (barras, linhas, contadores)
+  - apple-style-enforcer        # padrao Apple Minimalista: contraste, precision, safe zone
+
+  # Tier 4 — Suporte
+  - brand-configurator          # onboarding e configuracao de marca no brand-memory
+  - brand-identity-guardian     # garante consistencia visual com a marca ao longo da composition
+  - format-adapter              # adapta entre formatos (vertical 9:16 / feed 1:1 / horizontal 16:9)
+  - copy-layer-reviewer         # revisa copy nas compositions (acentuacao, legibilidade)
+
+  # Tier 5 — Revisao e Entrega
+  - motion-reviewer             # avalia qualidade visual e timing
+  - senior-quality-reviewer     # revisao senior: mandamentos BRABO, saida quadrupla, stagger
+  - pre-render-gate             # checklist BRABO completo antes do render
+  - render-engineer             # configuracao e execucao do render (draft/full)
+  - quality-gate-motion         # score final 0-100 antes de entregar ao usuario
+
+  # Tier 6 — Agentes Anti-Erro e Anti-IA (obrigatorios, rodam antes de toda entrega)
+  - motion-director             # revisa fluidez, easing, blur, transicao — bloqueia bounce/wiggle/shake
+  - visual-consistency          # consistencia de paleta, tipografia, alinhamento entre cenas
+  - caption-sync                # sincronia de legendas: timing, quebra, destaque, posicao
+  - copy-clarity                # clareza da copy interna: frase curta, forte, sem cara de IA
+  - narrative-flow              # progressao narrativa: começo, tensao, virada, conclusao, CTA
+  - concept-guardian            # conceito visual vs estrategia: visual alinhado ao produto/marca
+  - technical-remotion          # qualidade de codigo: tokens, clamp, helpers, spring configs
+  - anti-ai-look                # detecta aparencia de IA: excesso de efeito, composicao generica, sem alma
+  - error-hunter                # caca erros grosseiros: cortes, overflow, desalinhamento, typo
+  - final-approval              # aprovacao final — so libera se TODOS os agentes tier 6 aprovarem
+
+routing:
+  keywords:
+    - remotion
+    - animacao
+    - video programatico
+    - motion design
+    - zeus-motion
+    - comercial
+    - composition
+    - texto animado
+    - blur reveal
+    - counter animado
+    - mockup celular animado
+    - confeti
+    - stamp efeito
+    - after effects remotion
+    - diretor brabo
+    - saida quadrupla
+    - palavra por palavra
+    - spring config
+    - cena cinematografica
+    - apple minimalista
+    - zeus dark
+
+  peso_minimo: 41
+
+# ─── REGRAS DO SQUAD ──────────────────────────────────────────────────────────
+squad_rules:
+  - max_compositions_per_session: 3
+  - require_brand_onboarding: false   # usa universal-default se nao informado
+  - preview_before_render: true
+  - fullsafe_on_edit: true
+  - diretor_brabo_before_code: true   # spec visual obrigatoria em projetos 5+ cenas
+  - brabo_os_mandatory: true          # os 10 Mandamentos sao lei em todo .tsx gerado
+
+# ─── BRABO MOTION OS v9.0 — 10 MANDAMENTOS (resumo) ─────────────────────────
+brabo_os:
+  version: "9.0"
+  doc: squads/zeus-motion/docs/brabo-motion-os-v9.md
+  mandamentos:
+    1: "Analise antes de animar — responda 5 perguntas por cena antes de escrever codigo"
+    2: "Palavra por palavra — stagger 1-4f, NUNCA linha por linha"
+    3: "Vocabulario de curvas — ENTRADA:out(cubic), SAIDA:in(exp), MORPH:inOut(cubic)"
+    4: "Motion blur — ENTRADA blur 10-14px→0, SAIDA 0→15-25px"
+    5: "Stagger e lei — nenhum grupo entra/sai junto, 2f entre elementos"
+    6: "Direcoes opostas — saem esq. → entram da dir. (e assim por diante)"
+    7: "Zero frames vazios — overlap 5-12f entre Sequences obrigatorio"
+    8: "Background em corte seco — NUNCA translateX/Y no background"
+    9: "Saida Quadrupla — posicao + blur + opacity + scale SEMPRE juntos"
+    10: "Layouts variados — NUNCA mesma composicao em cenas consecutivas"
+
+  primitivas:
+    ci:      "clamped interpolate — NUNCA interpolate sem clamp"
+    exitTo:  "saida quadrupla (posicao + blur + opacity + scale)"
+    exitToNB: "saida sem blur (quando filho tem WebkitBackgroundClip:text)"
+    mergeStyles: "combina CSSProperties de entrada + saida"
+    BackgroundBase: "3 camadas obrigatorias (cor + radial + noise SVG)"
+    AnimatedText: "palavra por palavra com stagger 1-4f"
+
+  spring_configs:
+    text:   "{ damping: 14, mass: 0.8 }"
+    card:   "{ damping: 13, mass: 0.9 }"
+    badge:  "{ damping: 12, mass: 0.7, stiffness: 120 }"
+    icon:   "{ damping: 10, mass: 0.8, stiffness: 120 }"
+    snappy: "{ damping: 18, mass: 0.6, stiffness: 200 }"
+    bouncy: "{ damping: 8,  mass: 0.8, stiffness: 150 }"
+    heavy:  "{ damping: 16, mass: 1.2 }"
+
+  known_errors:
+    ERRO1: "filter:blur() no parent QUEBRA WebkitBackgroundClip:text — usar exitToNB"
+    ERRO2: "spring overdamped para blur (damping_ratio > 1.1) — blur nao some antes do frame 25"
+    ERRO3: "exitTo() em wrapper de gradient text — usar exitToNB()"
+    ERRO4: "sons gerados com tom puro sem ADSR — resultado robotico/feio"
+    ERRO5: "timing de sons em triggers tecnicos, nao em momentos visuais"
+    ERRO6: "retangulo solido reaparece apos correcao parcial — corrigir ARQUITETURA, nao sintoma"
+    ERRO7: "audio triplo — ffmpeg map 0 inclui stream AAC embutido do Remotion — usar -map 0:v"
+    ERRO8: "timing inventado sem silencedetect — gera 7+ iteracoes de sync desnecessarias"
+    ERRO9: "estender cena alem do narr_end — cena errada visivel durante narracao de outra"
+    ERRO10: "nao propagar cascata de timing — cenas posteriores desalinhadas"
+    ERRO11: "cor de acento (ouro/teal) em todos os elementos — sem hierarquia visual, parece template generico. Correcao: acento em 1-2 elementos criticos, resto branco hierarquico"
+    ERRO12: "timing 27s (810f) para 10 cenas com muito texto — texto passa rapido demais. Correcao: 142f/cena + 7f overlap = 1357f = 45.23s"
+    ERRO13: "dizer 'abra o Studio' em vez de renderizar — usuario quer o arquivo .mp4, nao o servidor. Usar npx remotion render direto e entregar o caminho"
+    ERRO14: "escala 0→110%→100% em qualquer elemento — classico bounce amador. Usar 0.96→1.00 no maximo"
+    ERRO15: "movimento linear em elemento principal — usar Easing.out(Easing.cubic) ou inOut por padrao"
+    ERRO16: "elemento aparecendo seco na tela sem fade+blur — toda entrada precisa de opacity+blur+y ou mascara"
+    ERRO17: "blur ausente em transicoes de cena rapidas — blur proporcional a velocidade e obrigatorio"
+    ERRO18: "excesso de movimento simultaneo — nenhuma cena pode ter todos os elementos entrando no mesmo frame"
+    ERRO19: "texto pequeno com animacao exagerada — texto pequeno prioriza legibilidade, animacao discreta"
+
+# ─── PROHIBICOES ABSOLUTAS ───────────────────────────────────────────────────
+prohibicoes:
+  audio:
+    - "NUNCA usar Audio component dentro de composition Remotion"
+    - "NUNCA -map 0 ou -map 0:a no ffmpeg com video do Remotion (inclui stream embutido)"
+    - "NUNCA aecho ou delay filters no mixing (cria eco artificial)"
+    - "SEMPRE -map 0:v + -map [out] no ffmpeg"
+    - "SEMPRE verificar com ffprobe antes de entregar"
+
+  timing:
+    - "NUNCA definir SCENE_TIMING sem silencedetect na narracao"
+    - "NUNCA estender cena alem do narr_end da narracao daquela cena"
+    - "NUNCA EXIT_F + 18 > dur (animacao de saida excede Sequence)"
+    - "NUNCA alterar dur de uma cena sem propagar cascata em todas as seguintes"
+    - "NUNCA renderizar sem pre-render-validate.js passar"
+
+  css:
+    - "NUNCA filter:blur() em pai de elemento com WebkitBackgroundClip:text"
+    - "NUNCA exitTo() em wrapper de gradient text (usar exitToNB)"
+    - "NUNCA interpolate sem clamp (sempre usar primitiva ci())"
+    - "NUNCA spring sem config declarada (usar SPRING.text, SPRING.card, etc)"
+    - "NUNCA BackgroundBase com menos de 3 camadas"
+
+  visual:
+    - "NUNCA mesmo layout em cenas consecutivas"
+    - "NUNCA texto abaixo de y=1200 (safe zone Reels)"
+    - "NUNCA animacao de background com translateX/Y (corte seco apenas)"
+    - "NUNCA gap entre Sequences (overlap 5-12f obrigatorio)"
+    - "NUNCA linha inteira de texto entrando junto (palavra por palavra)"
+    - "NUNCA inventar paleta no momento de codar — paleta vem do briefing do produto"
+    - "NUNCA ouro ou teal em captacao Magna HT — usar paleta magna_bw_premium"
+    - "NUNCA cor de acento em mais de 2 elementos por cena"
+    - "NUNCA 810 frames para 10 cenas de captacao com texto longo — minimo 1357"
+
+  movimento:
+    - "NUNCA escala 0→110%→100% — bounce amador proibido"
+    - "NUNCA wiggle, tremedeira ou shake decorativo"
+    - "NUNCA overshoot visivel em qualquer elemento"
+    - "NUNCA elemento aparecendo seco sem fade+blur combinados"
+    - "NUNCA interpolacao linear em movimentos principais (usar easing curvo)"
+    - "NUNCA blur ausente em transicoes de cena rapidas"
+    - "NUNCA todos os elementos da cena entrando no mesmo frame"
+    - "NUNCA zoom explosivo ou camera tremendo sem funcao narrativa"
+    - "NUNCA letra pulando, quicando ou com efeito de mola"
+    - "NUNCA card, texto ou objeto com bounce de escala passando de 1.0"
+    - "NUNCA animacao parecida com template Canva ou PowerPoint animado"
+    - "NUNCA movimento constante sem pausa — toda cena precisa respirar"
+
+# ─── AGENTE DE ROTEIRO (OBRIGATORIO) ─────────────────────────────────────────
+agente_roteiro:
+  url: "https://gemini.google.com/gem/e47a6069b6d5"
+  regra: >
+    TODO roteiro de video motion DEVE ser gerado por este agente Gemini.
+    Ele entrega roteiro detalhado: cena por cena, texto exato, direcao visual, timing previsto.
+    PROIBIDO roteiro simples, amador ou criado sem este agente.
+    O roteiro define o codigo. Roteiro fraco = video fraco.
+  personalidade_visual_obrigatoria: >
+    O roteiro DEVE definir a identidade visual completa do video antes de qualquer linha de codigo.
+    Cada motion tem sua propria personalidade. Nao existe video generico.
+    O agente de roteiro entrega obrigatoriamente:
+      - Fonte principal e fontes de apoio (nao e sempre SF Pro — depende do projeto)
+      - Paleta de cores (background, primaria, acentos, gradientes)
+      - Estilo de movimento (snappy/fluido/cinematografico/agressivo/suave)
+      - Estilo de arte (minimalista/maximalista/dark/light/neon/corporate/editorial)
+      - Estilo de imagens (mockups, fotos, ilustracoes, 3D, iconografia, formas geometricas)
+      - Atmosfera geral (tom emocional: urgente/inspirador/tecnico/luxuoso/direto)
+  proibicao: >
+    PROIBIDO iniciar o codigo sem que o roteiro tenha definido todos os itens acima.
+    PROIBIDO assumir que o estilo e sempre Apple Minimalista preto/branco.
+    O AgenteArquiteto v13 e referencia de ESTRUTURA e PROFISSIONALISMO, nao de estilo fixo.
+    Cada video tem a sua propria identidade visual definida no roteiro.
+
+# ─── PIPELINE VIDEO COM NARRADOR (obrigatorio, nao pular etapas) ─────────────
+pipeline_video_narrado:
+  etapa_0: "roteiro — agente Gemini: https://gemini.google.com/gem/e47a6069b6d5"
+  etapa_1: "silencedetect na narracao — extrair timestamps exatos de cada segmento"
+  etapa_2: "tabela cena x narracao — mapear segmentos para cenas"
+  etapa_3: "calcular SCENE_TIMING matematicamente — EXIT_F = narr_end × 30 - from"
+  etapa_4: "codar composition — primitivas BRABO, BackgroundBase 3 camadas"
+  etapa_5: "pre-render-validate.js — nao renderizar se reprovado"
+  etapa_6: "render draft — verificar visual (escala 0.5, jpeg 80%)"
+  etapa_7: "render full quality — jpeg 95%, escala 1"
+  etapa_8: "ffmpeg mixing — -map 0:v + -map [out], nunca -map 0"
+  etapa_9: "ffprobe verificacao — 1 video + 1 audio stream"
+  etapa_10: "entrega final"
+
+# ─── FILOSOFIAS VISUAIS ───────────────────────────────────────────────────────
+visual_philosophies:
+  apple_minimalista:
+    bg: "#000000"
+    surface1: "#0A0A0C"
+    surface2: "#121214"
+    accent: "#FFFFFF"
+    text_primary: "#FFFFFF"
+    text_secondary: "#8E8E93"
+    safe_zone: "900x900px centralizado"
+    camera: "snappy premium, movimentos lineares, scanner optico"
+
+  zeus_dark:
+    bg: "#050505"
+    primary: "#F5F5F7"
+    blue_accent: "#0071E3"
+    green_accent: "#30D158"
+    camera: "parallax Z, springs fisicos, sem camera virtual"
+
+  dark_luxury_tech_premium:
+    bg: "#000000"
+    accent: "#FF002E"
+    accent_uso: "POSITIVO — destaque, urgencia, energia. Nao e negativo."
+    text_primary: "#FFFFFF"
+    text_secondary: "rgba(255,255,255,0.65)"
+    font: "'SF Pro Display', -apple-system, 'Helvetica Neue', sans-serif"
+    safe_x: 90
+    pad_top: 180
+    safe_bottom: 1280
+    camera: "movimentos precisos, sem bounce, blur em transicoes rapidas"
+    referencia: "src/compositions/MentoriaEstrutura21Dias/index.tsx"
+
+  magna_bw_premium:
+    bg: "#080808"
+    white: "#FFFFFF"
+    offWhite: "rgba(255,255,255,0.92)"
+    muted: "rgba(255,255,255,0.50)"
+    subtle: "rgba(255,255,255,0.14)"
+    cardBg: "rgba(255,255,255,0.04)"
+    cardBorder: "rgba(255,255,255,0.10)"
+    red: "#FF3B30"
+    font_display: "Montserrat, 'SF Pro Display', -apple-system, sans-serif"
+    font_mono: "'Space Mono', 'Courier New', monospace"
+    uso: "Captacao Mentoria Magna HT — sem cores de acento (vermelho apenas em negativos)"
+    design_system_doc: "src/compositions/MagnaCaptura/design-system.ts"
+    regra_acento: "offWhite=texto principal, muted=labels, red=apenas negativo. NUNCA ouro/teal."
+
+# ─── COMPOSITIONS DISPONIVEIS ────────────────────────────────────────────────
+compositions:
+  # Compositions de uso geral
+  - id: TextReveal
+    file: src/compositions/TextReveal/index.tsx
+    frames: 90
+    purpose: "Frase de impacto / motivacao"
+
+  - id: DeviceDemo
+    file: src/compositions/DeviceDemo/index.tsx
+    frames: 150
+    purpose: "Demo de app ou produto digital"
+
+  - id: ProblemSolution
+    file: src/compositions/ProblemSolution/index.tsx
+    frames: 180
+    purpose: "Antes e depois / problema vs solucao"
+
+  - id: DataStory
+    file: src/compositions/DataStory/index.tsx
+    frames: 150
+    purpose: "Metricas, resultados, numeros"
+
+  - id: PriceReveal
+    file: src/compositions/PriceReveal/index.tsx
+    frames: 150
+    purpose: "Oferta, preco, desconto"
+
+  - id: ArrowExplainer
+    file: src/compositions/ArrowExplainer/index.tsx
+    frames: 120
+    purpose: "Explicar processo em passos"
+
+  - id: AiDemo
+    file: src/compositions/AiDemo/index.tsx
+    frames: 150
+    purpose: "Demo de ferramenta de IA"
+
+  - id: CheckoutDemo
+    file: src/compositions/CheckoutDemo/index.tsx
+    frames: 120
+    purpose: "Confirmacao de compra / checkout"
+
+  # Compositions de marketing do squad
+  - id: SquadPromo
+    file: src/compositions/SquadPromo/index.tsx
+    frames: 640
+    purpose: "Video de marketing do squad ZEUS-MOTION"
+
+  # Compositions premium (Diretor Brabo)
+  - id: AgenteArquiteto
+    file: src/compositions/AgenteArquiteto/index.tsx
+    frames: 1387
+    purpose: "Comercial produto LT — Agente Arquiteto de Mentoria"
+    philosophy: apple_minimalista
+    spec_doc: squads/zeus-motion/docs/diretor-brabo-workflow.md
+    approved_version: v13
+    approved_output: AgenteArquiteto-FINAL-v13.mp4
+    status: REFERENCIA_CANONICA
+    notes: >
+      Estilo canonico aprovado para comerciais premium com narrador.
+      9 cenas, 46.23s, 1387 frames, fundo Apple Minimalista (#000000).
+      Toda nova composition com narrador deve seguir este padrao.
+      Timing calculado via silencedetect. Audio mixing via ffmpeg (-map 0:v).
+      Producao levou 13 versoes por nao seguir o pipeline correto.
+      A partir desta versao: silencedetect primeiro, codigo depois.
+
+  - id: MagnaCaptura
+    file: src/compositions/MagnaCaptura/index.tsx
+    frames: 1357
+    purpose: "Video de captacao Mentoria Magna — 10 cenas, texto puro, sem narrador"
+    philosophy: magna_bw_premium
+    design_system: src/compositions/MagnaCaptura/design-system.ts
+    approved_version: v5
+    approved_output: MagnaCaptura-v5.mp4
+    status: REFERENCIA_CANONICA
+    notes: >
+      Estilo canonico aprovado para captacao HT Magna sem narrador.
+      10 cenas, 45.23s, 1357 frames, paleta B&W Premium (#080808).
+      Timing fixo: 142f/cena, 7f overlap entre cenas, EXIT_F 100-110 por cena.
+      Scene 1 obrigatorio: eyebrow "MENTORIA MAGNA" em FONT_MONO.
+      Cor de acento: ZERO. Hierarquia de brancos. Vermelho apenas em negativos.
+      Erros aprendidos: ouro em tudo (ERRO11), timing curto (ERRO12).
+
+  - id: MentoriaEstrutura21Dias
+    file: src/compositions/MentoriaEstrutura21Dias/index.tsx
+    frames: 1090
+    purpose: "Anuncio comercial mentoria — estrutura 21 dias, narrador + trilha sincronizada"
+    philosophy: dark_luxury_tech_premium
+    approved_version: v1
+    approved_output: output/MentoriaEstrutura21Dias/mentoria-estrutura-21dias-v01.mp4
+    status: REFERENCIA_CANONICA
+    music: public/ads-05-v3-music.mp3
+    music_start_from: 710
+    music_volume: 0.12
+    music_sync_note: "startFrom=710 garante que fim do video (36.33s) = exato 60s da musica"
+    notes: >
+      Terceiro estilo canonico aprovado. Dark Luxury Tech Premium.
+      7 cenas, 36.33s, 1090 frames, bg #000000, accent #FF002E como POSITIVO.
+      Narrador sincronizado + trilha de fundo (volume 0.12).
+      Elementos visuais: ampulheta SVG animada areia, numero "3" grande, lista staggerada.
+      Erro aprendido: numero + SVG no mesmo centro = sobreposicao. Correcao: separar por metade.
+      Erro aprendido: accent vermelho nao e negativo aqui — e destaque positivo da identidade.
+      Erros documentados: ERRO-AUTO-1 a ERRO-AUTO-6 em padrao-aprovado-zeus-motion.md.
+
+# ─── MOTION TOKENS (importar em todo .tsx, nunca usar numeros magicos) ────────
+motion_tokens:
+  file: "src/motion-tokens.ts"
+  doc:  "squads/zeus-motion/docs/padrao-aprovado-zeus-motion.md#parte-11"
+  durations:  { fast: 12, medium: 24, slow: 40, scene: 60 }
+  distance:   { tiny: 8, small: 16, medium: 28, large: 48 }
+  scale:      { subtleIn: 0.97, normalIn: 0.98, subtleOut: 0.985, cameraIn: 1.04 }
+  blur:       { none: 0, soft: 6, medium: 12, strong: 20, max: 30 }
+  stagger:    { letter: 1.5, word: 3, line: 5, card: 4 }
+  regra: >
+    Todo interpolate de entrada usa MOTION.durations.medium (24f) por padrao.
+    Todo blur de entrada usa MOTION.blur.medium (12px).
+    Todo deslocamento usa MOTION.distance.small (16px) por padrao.
+    Escala de entrada: MOTION.scale.subtleIn (0.97). NUNCA abaixo de 0.94 ou acima de 1.01.
+
+# ─── ANTI AI LOOK (critico — roda automaticamente antes de toda entrega) ──────
+anti_ai_look:
+  doc: "squads/zeus-motion/docs/padrao-aprovado-zeus-motion.md#parte-12"
+  sinais_de_bloqueio:
+    - "tudo se mexendo ao mesmo tempo (falta de stagger e hierarquia)"
+    - "excesso de elementos animados sem proposito"
+    - "textos sem escala tipografica (todos no mesmo tamanho)"
+    - "transicoes exageradas ou de pack de efeitos"
+    - "cores inconsistentes entre cenas"
+    - "legendas fora de timing com a fala"
+    - "cards com visual de dashboard fake"
+    - "fontes genericas sem relacao com o produto"
+    - "visual bonito mas sem narrativa ou direcao"
+    - "composicao que parece gerada por prompt, nao dirigida"
+  agente_responsavel: anti-ai-look
+  gate: "rodar antes de final-approval, bloquear se qualquer sinal detectado"
+
+# ─── MOTION PHILOSOPHY v2 (obrigatorio em todo .tsx gerado) ──────────────────
+motion_philosophy_v2:
+  doc: squads/zeus-motion/docs/padrao-aprovado-zeus-motion.md#parte-10
+  versao: "2.0"
+  atualizado: "2026-05-18"
+
+  principio_central: >
+    Todo movimento deve ter aparencia de motion design premium criado no After Effects
+    por motion designer experiente. Suave, fluido, intencional, maduro, elegante e
+    cinematografico. Nunca amador, infantil, exagerado, robotico ou de template generico.
+
+  entradas_padrao:
+    opacity:   "0 → 1"
+    blur:      "12px → 0px (ou 8px → 0px para subtil)"
+    translate: "y +20px → 0px (ou direcional conforme fluxo da cena)"
+    scale:     "0.97 → 1.00 (NUNCA abaixo de 0.95 ou acima de 1.02 para entrada)"
+    easing:    "Easing.out(Easing.cubic)"
+    duracao:   "14-22 frames para elementos principais"
+
+  saidas_padrao:
+    padrao:    "exitTo() — posicao + blur + opacity + scale (Saida Quadrupla)"
+    opacity:   "1 → 0"
+    blur:      "0px → 8px – 16px"
+    translate: "na direcao oposta a entrada anterior"
+    scale:     "1.00 → 0.985 – 0.99"
+    easing:    "Easing.in(Easing.cubic)"
+
+  escala_proibida:
+    - "0 → 110% → 100%  (bounce amador classico)"
+    - "0 → 105% → 100%  (variante proibida)"
+    - "scale > 1.04 em entrada de qualquer elemento"
+
+  escala_aceita:
+    - "0.96 → 1.00  (padrao)"
+    - "0.97 → 1.00  (subtil)"
+    - "0.98 → 1.00  (quase imperceptivel)"
+    - "1.00 → 1.04  (camera push lento em 60+ frames)"
+
+  blur_por_velocidade:
+    parado:      "0px"
+    lento:       "1px – 4px"
+    medio:       "4px – 10px"
+    rapido:      "10px – 24px"
+    transicao:   "ate 30px"
+
+  easings_aprovados:
+    - "Easing.out(Easing.cubic)    — saida com desaceleracao natural (padrao entradas)"
+    - "Easing.inOut(Easing.cubic)  — entrada e saida suaves (padrao morphs)"
+    - "Easing.in(Easing.cubic)     — aceleracao inicial (padrao saidas)"
+    - "Easing.out(Easing.quad)     — saida delicada"
+    - "Easing.inOut(Easing.sin)    — respiracao e loops"
+    - "spring damping >= 12        — sem bounce visivel"
+
+  ritmo_por_cena:
+    frame_0_8:   "fundo ganha vida sutilmente"
+    frame_6_18:  "elemento principal entra"
+    frame_14_26: "titulo ou focal entra"
+    frame_20_plus: "textos de apoio entram em stagger (3-5f entre cada)"
+    pausa:       "cena respira antes da saida (minimo 20 frames sem movimento)"
+    saida:       "EXIT_F inicia saida suave"
+
+  checklist_revisao:
+    - "zero bounce ou wiggle visivel"
+    - "zero escala passando de 1.0 em entradas"
+    - "zero elemento aparecendo seco sem fade+blur"
+    - "zero transicao sem easing curvo"
+    - "zero todos os elementos entrando no mesmo frame"
+    - "texto legivel durante toda a animacao"
+    - "movimento conduz o olhar para o elemento certo"
+    - "resultado parece After Effects profissional"
+
+# ─── QUALITY GATE ─────────────────────────────────────────────────────────────
+quality_gate:
+  min_score: 70
+  checklist:
+    - ci_on_all_interpolates     # NUNCA interpolate sem clamp
+    - spring_configs_defined     # NUNCA spring sem config
+    - word_by_word_text          # texto palavra por palavra (Mandamento 2)
+    - stagger_1_to_4_frames      # stagger entre palavras de 1 a 4f
+    - quadruple_exit             # toda saida: posicao + blur + opacity + scale
+    - opposite_directions        # direcoes de saida/entrada sao opostas
+    - sequences_with_overlap     # overlap 5-12f entre cenas
+    - background_no_direction    # background sem animacao direcional
+    - background_3_layers        # 3 camadas (cor + radial + noise)
+    - varied_layouts             # layouts diferentes entre cenas consecutivas
+    - no_blur_on_gradient_text   # quando filho tem gradient text: usar NB variants
+    - zero_typescript_errors     # codigo compila sem erros
+    - timing_natural             # animacoes nao parecem roboticas
+    - brand_consistent           # cores e fontes da marca mantidas
+    - safe_zone_respected        # conteudo dentro das safe zones
+    - no_overflow                # nada cortado nas bordas
+    - accent_correct             # textos com acentuacao perfeita
+    # Motion Philosophy v2 gates (obrigatorios desde 3.2.0)
+    - no_bounce_overshoot        # zero escala >1.0 em entrada, zero wiggle/bounce/tremida
+    - blur_on_fast_moves         # blur presente em movimentos medios e rapidos
+    - easing_is_curved           # nenhum movimento principal usa linear
+    - elements_have_stagger      # nenhuma cena tem todos os elementos entrando no frame 0
+    - pause_exists_per_scene     # toda cena tem beat de pausa antes da saida
+    - fade_on_every_entry        # opacity+blur em toda entrada de elemento importante
+    # Anti AI + Tier 6 gates (obrigatorios desde 3.3.0)
+    - motion_tokens_used         # MOTION.* importado, zero numeros magicos para dur/blur/scale
+    - no_ai_look                 # anti-ai-look aprovado
+    - caption_synced             # caption-sync aprovado (se tiver legenda)
+    - copy_clear                 # copy-clarity aprovado
+    - narrative_flows            # narrative-flow aprovado
+    - concept_aligned            # concept-guardian aprovado
+    - code_clean                 # technical-remotion aprovado
+    - error_free                 # error-hunter aprovado
+    - final_approval_gate        # final-approval passou — BLOQUEIA entrega se nao
+    # Novos gates de profissionalismo (v3.4.0)
+    - profissionalismo_approved  # profissionalismo: nao parece template, nao e amador
+    - easing_entrada_approved    # easing-inspector-entrada: out(cubic), blur proporcional
+    - easing_saida_approved      # easing-inspector-saida: in(exp), Saida Quadrupla
+    - easing_curvas_approved     # easing-inspector-curvas: springs, stagger, ritmo, pausa
+    - zero_entradas_secas        # entrada-profissional: todo elemento tem blur+fade+movimento
+    - zero_saidas_secas          # saida-profissional: toda saida tem os 4 componentes
+    - texto_dinamico_approved    # texto-dinamico: max 5 palavras em fonte >= 52px, fonte min 80px para impacto
+    - narracao_sync_approved     # texto-dinamico: cada cena mostra o texto narrado AGORA, dur vem do silencedetect
